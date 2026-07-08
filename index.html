@@ -399,8 +399,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Укажи здесь путь к развернутым функциям Firebase Cloud Functions
-        const API_URL = "https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net"; 
+        const API_URL = "https://aenigma-server.onrender.com"; 
 
         const likesRef = ref(db, 'counters/likes');
         const connectedRef = ref(db, ".info/connected");
