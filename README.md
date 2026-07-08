@@ -30,9 +30,12 @@ If something seems impossible, you are probably looking in the wrong place.
 - There are no time limits.
 - Nothing needs to be installed.
 - Think before you type.
-- If you're stuck, keep looking.
-  --
-Goal
+  
+  If you're stuck, keep looking.
+  
+---
+  
+## Goal
 
 Reach Level 23.
 
