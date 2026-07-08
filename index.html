@@ -379,76 +379,75 @@
     </div>
 
     <footer>
-        <div class="stats">ONLINE: <strong id="online-count">0</strong></div>
+        <div class="stats">ONLINE: <strong id="online-count">1</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getDatabase, ref, onValue, runTransaction, push, onDisconnect, set } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
-
+    <script>
         (function() {
             const BACKEND_URL = "https://aenigma-server.onrender.com";
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
-                authDomain: "aenigma-mark-23.firebaseapp.com",
-                databaseURL: "https://aenigma-mark-23-default-rtdb.europe-west1.firebasedatabase.app",
-                projectId: "aenigma-mark-23",
-                storageBucket: "aenigma-mark-23.firebasestorage.app",
-                messagingSenderId: "318632324088",
-                appId: "1:318632324088:web:c9ff426bac663a64ca840d",
-                measurementId: "G-FNC6SW3VRZ"
-            };
-
-            const app = initializeApp(firebaseConfig);
-            const db = getDatabase(app);
-            const likesRef = ref(db, 'counters/likes');
-            const onlineUsersRef = ref(db, "online_users");
             const likeBtn = document.getElementById('like-btn');
-            let hasLikedThisSession = false;
-
-            let playerToken = localStorage.getItem('aenigma_token') || null;
+            let playerToken = sessionStorage.getItem('aenigma_token') || null;
             let currentLevelData = null;
             let wrongAttempts = 0;
             let clickPattern = [];
+            let canvasTrace = [];
+            let lastClickTime = 0;
             let kineticAnimationFrameId = null;
             let currentResizeHandler = null;
+            let isSubmitting = false;
 
-            if (localStorage.getItem('aenigma_liked') === 'true') { disableLikeButton(); }
 
-            onValue(likesRef, (snapshot) => {
-                document.getElementById('likes-count').innerText = snapshot.val() || 0;
+            async function updateSystemStats() {
+                try {
+                    const res = await fetch(`${BACKEND_URL}/api/stats?token=${playerToken || ''}`);
+                    if (!res.ok) throw new Error("Stats fetch failed");
+                    const data = await res.json();
+                    
+                    const likesCountEl = document.getElementById('likes-count');
+                    if (likesCountEl) likesCountEl.innerText = data.likes || 0;
+                    
+                    document.getElementById('online-count').innerText = data.online || 1;
+                    if (data.hasLiked) {
+                        disableLikeButton();
+                    }
+                } catch(e) { console.error("Stats syncing failed."); }
+            }
+
+            // Управление интервалом обновлений и его очистка при выходе
+            const statsInterval = setInterval(updateSystemStats, 15000);
+            window.addEventListener("beforeunload", () => {
+                clearInterval(statsInterval);
             });
+            
+            updateSystemStats();
 
-            likeBtn.addEventListener('click', function() {
-                if (localStorage.getItem('aenigma_liked') === 'true' || hasLikedThisSession) {
-                    alert("SYSTEM:// ACCESS DENIED. YOU ALREADY LOGGED YOUR VOTE.");
-                    return;
-                }
-                runTransaction(likesRef, (currentLikes) => {
-                    return (currentLikes || 0) + 1;
-                }).then(() => {
-                    localStorage.setItem('aenigma_liked', 'true');
-                    hasLikedThisSession = true;
-                    disableLikeButton();
-                }).catch(err => console.error(err));
+            likeBtn.addEventListener('click', async function() {
+                try {
+                    const res = await fetch(`${BACKEND_URL}/api/like`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: playerToken })
+                    });
+                    if (!res.ok) throw new Error("Like request failed");
+                    const data = await res.json();
+                    if (data.success) {
+                        disableLikeButton();
+                        const likesCountEl = document.getElementById('likes-count');
+                        if (likesCountEl) likesCountEl.innerText = data.likes;
+                    } else {
+                        alert(data.message || "SYSTEM:// ACCESS DENIED.");
+                    }
+                } catch(e) { alert("COMMUNICATION ERROR."); }
             });
 
             function disableLikeButton() {
                 likeBtn.disabled = true;
                 likeBtn.style.opacity = '0.5';
                 likeBtn.style.cursor = 'not-allowed';
+                likeBtn.innerHTML = "❤ THANK YOU";
             }
-
-            const myUserRef = push(onlineUsersRef);
-            set(myUserRef, true);
-            onDisconnect(myUserRef).remove();
-
-            onValue(onlineUsersRef, (snap) => {
-                const count = snap.numChildren();
-                document.getElementById('online-count').innerText = count > 0 ? count : 1;
-            });
 
             async function startGame() {
                 document.getElementById('start-screen').classList.remove('active');
@@ -456,9 +455,11 @@
                 
                 try {
                     const res = await fetch(`${BACKEND_URL}/api/start`);
+                    if (!res.ok) throw new Error("Start module failed");
                     const data = await res.json();
                     playerToken = data.token;
-                    localStorage.setItem('aenigma_token', playerToken);
+                    sessionStorage.setItem('aenigma_token', playerToken);
+                    updateSystemStats();
                     renderLevel(data.level);
                 } catch(e) {
                     alert("SERVER DISCONNECTED. REFRESH PAGE.");
@@ -517,27 +518,36 @@
                 }
             }
 
-            async function submitAnswer(customAnswer = null) {
-                let ans = customAnswer;
-                if (!ans) {
+            async function submitAnswer(customPayload = null) {
+                if (isSubmitting) return;
+
+                let requestBody = { token: playerToken };
+
+                if (customPayload) {
+                    Object.assign(requestBody, customPayload);
+                } else {
                     const inputField = document.getElementById('user-answer');
-                    ans = inputField.value.trim();
+                    const ans = inputField.value.trim();
+                    if (!ans) return;
+                    requestBody.answer = ans;
                 }
-                if (!ans) return;
 
                 try {
+                    isSubmitting = true;
                     document.getElementById('sub-btn').innerText = "VERIFYING...";
                     const res = await fetch(`${BACKEND_URL}/api/submit`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: playerToken, answer: ans })
+                        body: JSON.stringify(requestBody)
                     });
+                    
+                    if (!res.ok) throw new Error("Verification server error");
+                    
                     const data = await res.json();
-                    document.getElementById('sub-btn').innerText = "SUBMIT";
 
                     if (data.success) {
                         playerToken = data.token; 
-                        localStorage.setItem('aenigma_token', playerToken);
+                        sessionStorage.setItem('aenigma_token', playerToken);
                         currentLevelData = data.level; 
                         
                         document.getElementById('modal-message').textContent = `Layer authorization successful. Forwarding...`;
@@ -547,6 +557,8 @@
                     }
                 } catch(e) {
                     alert("COMMUNICATION ERROR.");
+                } finally {
+                    isSubmitting = false;
                     document.getElementById('sub-btn').innerText = "SUBMIT";
                 }
             }
@@ -559,7 +571,7 @@
                 }
                 wrongAttempts++;
                 document.getElementById('attempt-counter').textContent = wrongAttempts;
-                if (wrongAttempts >= 10 && currentLevelData.levelIndex < 15) {
+                if (wrongAttempts >= 10 && currentLevelData && currentLevelData.levelIndex < 15) {
                     document.getElementById('hint-box').classList.add('visible');
                 }
             }
@@ -584,9 +596,13 @@
                 clickBtn.onmouseup = clickBtn.ontouchend = (e) => {
                     e.preventDefault();
                     const d = Date.now() - lastClickTime;
-                    clickPattern.push(d > 220 ? '-' : '.');
+                    clickPattern.push(d);
                     if (clickPattern.length > 9) clickPattern.shift();
-                    if (clickPattern.join('') === "...---...") { submitAnswer("clicker-pass"); }
+                    
+                    if (clickPattern.length === 9) {
+                        submitAnswer({ type: "clicker", pattern: [...clickPattern] });
+                        clickPattern = [];
+                    }
                 };
             }
 
@@ -595,16 +611,35 @@
                 const ctx = canvas.getContext('2d');
                 canvas.width = canvas.parentElement.clientWidth; 
                 canvas.height = canvas.parentElement.clientHeight;
-                let drawing = false, cl = false, cr = false;
-                canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; cl = false; cr = false; };
-                canvas.onmouseup = canvas.ontouchend = (e) => { e.preventDefault(); drawing = false; ctx.clearRect(0,0,canvas.width,canvas.height); };
+                let drawing = false;
+                canvasTrace = [];
+
+                canvas.onmousedown = canvas.ontouchstart = (e) => { 
+                    e.preventDefault(); 
+                    drawing = true; 
+                    canvasTrace = [];
+                };
+                canvas.onmouseup = canvas.ontouchend = (e) => { 
+                    e.preventDefault(); 
+                    drawing = false; 
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                    if (canvasTrace.length > 5) {
+                        submitAnswer({ type: "canvas", width: canvas.width, trace: canvasTrace });
+                    }
+                };
                 canvas.onmousemove = canvas.ontouchmove = (e) => {
                     if (!drawing) return; e.preventDefault();
                     const rect = canvas.getBoundingClientRect();
                     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
                     const x = clientX - rect.left;
-                    if (x < 40) cl = true; if (x > canvas.width - 40) cr = true;
-                    if (cl && cr) { drawing = false; submitAnswer("canvas-pass"); }
+                    const y = clientY - rect.top;
+                    
+                    if (canvasTrace.length === 0 || canvasTrace.length % 3 === 0) {
+                        canvasTrace.push({x: Math.round(x), y: Math.round(y)});
+
+                        if (canvasTrace.length > 100) canvasTrace.shift();
+                    }
                 };
             }
 
@@ -661,7 +696,7 @@
 
             function getCleanUrl() {
                 let currentUrl = window.location.href;
-                return currentUrl.startsWith('file://') ? 'https://google.com' : currentUrl;
+                return currentUrl.startsWith('file://') ? 'https://aenigma-mark-2-3.onrender.com/' : currentUrl;
             }
 
             function generateQR() {
@@ -695,8 +730,14 @@
             }
 
             function resetGame() {
-                localStorage.removeItem('aenigma_token'); 
+                sessionStorage.removeItem('aenigma_token'); 
                 playerToken = null;
+                wrongAttempts = 0;
+                currentLevelData = null;
+                clickPattern = [];
+                canvasTrace = [];
+                
+                document.getElementById('attempt-counter').textContent = "0";
                 document.getElementById('victory-screen').classList.remove('active');
                 document.getElementById('start-screen').classList.add('active');
             }
