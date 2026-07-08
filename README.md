@@ -1,6 +1,6 @@
 ## AENIGMA MARK 2.3
 ---
-About
+## About
 
 AENIGMA is a riddle game.
 
