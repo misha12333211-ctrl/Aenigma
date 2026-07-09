@@ -171,14 +171,25 @@
             cursor: pointer;
             margin: 20px auto;
             display: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             touch-action: none;
             position: relative;
             z-index: 20;
         }
+        
+        .clicker-btn.holding {
+            border-style: solid;
+            box-shadow: 0 0 20px rgba(188, 152, 85, 0.3);
+        }
+        
+        .clicker-btn.dash-ready {
+            color: #fff;
+            border-color: #fff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+
         .clicker-btn:active {
-            background: rgba(188, 152, 85, 0.2);
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
 
         #void-canvas {
@@ -339,7 +350,7 @@
             <h1 id="level-title">LEVEL X</h1>
             <div id="level-desc" style="white-space: pre-line; line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; position: relative; z-index: 20;">Loading...</div>
             
-            <button id="clicker-node" class="clicker-btn">⚡</button>
+            <button id="clicker-node" class="clicker-btn">📡</button>
             <input type="text" id="user-answer" placeholder="ENTER SOLUTION..." autocomplete="off">
             
             <div class="btn-container" id="control-block">
@@ -429,6 +440,8 @@
         let wrongAttempts = 0;
         let clickPattern = [];
         let kineticAnimationFrameId = null;
+        let morseTimerId = null;
+        let serverLevelData = null; 
 
         window.startGame = function() {
             document.getElementById('start-screen').classList.remove('active');
@@ -441,6 +454,10 @@
                 cancelAnimationFrame(kineticAnimationFrameId);
                 kineticAnimationFrameId = null;
             }
+            if (morseTimerId) {
+                clearTimeout(morseTimerId);
+                morseTimerId = null;
+            }
 
             try {
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
@@ -450,6 +467,8 @@
                     showVictoryScreen();
                     return;
                 }
+
+                serverLevelData = data; 
 
                 document.getElementById('level-title').textContent = data.title;
                 document.getElementById('level-desc').textContent = data.desc;
@@ -481,10 +500,17 @@
                     ctrlBlock.style.display = 'none';
                     canvas.style.display = 'block';
                     setupCanvas();
-                } else if (data.title === "LEVEL 23") {
+                } else if (data.title === "LEVEL 23" || data.type === "KINETIC") {
                     canvas.style.display = 'block';
                     canvas.style.pointerEvents = 'none'; 
                     setupKineticGhost();
+                }
+
+                if (data.title && data.title.includes("18")) { 
+                    const now = new Date();
+                    const hours = String(now.getUTCHours()).padStart(2, '0');
+                    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+                    inputField.value = hours + minutes; 
                 }
 
                 if (inputField.style.display !== 'none') {
@@ -495,12 +521,16 @@
             }
         }
 
-        async function sendAnswerToServer(answerString) {
+        async function sendAnswerToServer(answerString, rawData = null) {
             try {
                 const response = await fetch(`${API_URL}/checkAnswer`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index: currentLevelIndex, answer: answerString })
+                    body: JSON.stringify({ 
+                        index: currentLevelIndex, 
+                        answer: answerString,
+                        rawData: rawData 
+                    })
                 });
                 const result = await response.json();
 
@@ -531,10 +561,16 @@
 
         function triggerFail() {
             const inputField = document.getElementById('user-answer');
+            const clickBtn = document.getElementById('clicker-node');
+            
             if (inputField.style.display !== 'none') {
                 inputField.classList.add('shake');
                 setTimeout(() => inputField.classList.remove('shake'), 400);
+            } else if (clickBtn.style.display !== 'none') {
+                clickBtn.classList.add('shake');
+                setTimeout(() => clickBtn.classList.remove('shake'), 400);
             }
+            
             wrongAttempts++;
             document.getElementById('attempt-counter').textContent = wrongAttempts;
             if (wrongAttempts >= 10 && currentLevelIndex < 15) {
@@ -561,18 +597,31 @@
             const clickBtn = document.getElementById('clicker-node');
             let lastClickTime = 0;
             
+            clickBtn.className = "clicker-btn"; 
+
             clickBtn.onmousedown = clickBtn.ontouchstart = (e) => {
                 e.preventDefault();
                 lastClickTime = Date.now();
+                clickBtn.classList.add('holding');
+                
+                if (morseTimerId) clearTimeout(morseTimerId);
+                morseTimerId = setTimeout(() => {
+                    clickBtn.classList.add('dash-ready');
+                }, 220);
             };
 
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
                 e.preventDefault();
+                if (morseTimerId) clearTimeout(morseTimerId);
+                
                 const duration = Date.now() - lastClickTime;
+                clickBtn.classList.remove('holding', 'dash-ready');
+                
                 clickPattern.push(duration > 220 ? '-' : '.');
                 if (clickPattern.length > 9) clickPattern.shift();
-                if (clickPattern.join('') === "...---...") {
-                    await sendAnswerToServer(clickPattern.join(''));
+                
+                if (clickPattern.length === 9) {
+                    await sendAnswerToServer(null, { morsePattern: clickPattern.join('') });
                 }
             };
         }
@@ -603,7 +652,7 @@
                 if (x > canvas.width - 40) crossedRight = true;
                 if (crossedLeft && crossedRight) { 
                     drawing = false; 
-                    await sendAnswerToServer("passed"); 
+                    await sendAnswerToServer(null, { type: "SWIPE", crossedLeft: true, crossedRight: true }); 
                 }
             };
         }
@@ -614,7 +663,11 @@
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
 
-            const matrixCoefficients = [98, 500, 80, 544, 80, 544, 390, 500, 480, 500, 304, 500, 304, 500, 304, 544, 304, 544, 480, 544, 480, 544, 480, 500, 274, 544, 274, 500, 274, 500, 350, 500, 350, 500, 350, 350, 350, 350, 274, 350, 358, 350, 350, 544, 696, 500, 712, 500, 656, 500, 656, 544, 534, 500, 554, 500, 554, 500, 554, 544, 554, 544, 534, 544, 554, 350, 514, 350, 624, 500, 896, 544, 896, 500, 624, 544];
+            const matrixCoefficients = serverLevelData?.matrixCoefficients || [];
+            const letterGroups = serverLevelData?.letterGroups || [];
+            
+            if (!matrixCoefficients.length) return;
+
             const lines = [];
             for (let i = 0; i < matrixCoefficients.length; i += 4) {
                 lines.push([
@@ -624,8 +677,6 @@
                     ((matrixCoefficients[i+3] ^ 170) / 1000) * canvas.height
                 ]);
             }
-
-            const letterGroups = [[0, 1], [2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12], [13, 14, 15, 16], [17, 18]];
 
             function getFieldDistance(x, y, activeGroup, xOffset) {
                 let m = Infinity;
@@ -655,7 +706,7 @@
 
                 const time = performance.now();
                 const interval = 2000;
-                const currentLetterIdx = Math.floor((time / interval) % 6);
+                const currentLetterIdx = Math.floor((time / interval) % letterGroups.length);
                 const activeGroup = letterGroups[currentLetterIdx];
                 const progress = (time % interval) / interval;
                 const xOffset = (0.5 - progress) * 80; 
@@ -714,7 +765,7 @@
         }
 
         function resetGame() {
-            currentLevelIndex = 0; wrongAttempts = 0;
+            currentLevelIndex = 0; wrongAttempts = 0; serverLevelData = null;
             document.getElementById('victory-screen').classList.remove('active');
             document.getElementById('start-screen').classList.add('active');
         }
