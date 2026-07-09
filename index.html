@@ -159,14 +159,42 @@
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
 
-        // Чтение количества лайков из БД по-прежнему доступно всем
-        onValue(likesRef, (snap) => { document.getElementById('likes-count').innerText = snap.val() || 0; });
+        // Глобальное хранилище текущего количества лайков для синхронизации
+        let currentLikesCount = 0;
 
-        // Безопасное добавление лайков через серверную ручку (DevTools защищен)
+        // Чтение количества лайков из БД по-прежнему доступно всем
+        onValue(likesRef, (snap) => { 
+            currentLikesCount = snap.val() || 0;
+            document.getElementById('likes-count').innerText = currentLikesCount; 
+        });
+
+        // Железобетонное добавление лайков с мгновенным визуальным откликом на экране
         document.getElementById('like-btn').addEventListener('click', async () => {
+            const likesTextNode = document.getElementById('likes-count');
+            const likeBtnEl = document.getElementById('like-btn');
+            
+            // 1. Оптимистичное мгновенное увеличение на клиенте
+            currentLikesCount++;
+            likesTextNode.innerText = currentLikesCount;
+
             try {
-                await fetch(`${API_URL}/addLike`, { method: 'POST' });
-            } catch (err) { console.error("Like tracking failed:", err); }
+                // 2. Отправка скрытого запроса на бэкенд
+                const response = await fetch(`${API_URL}/addLike`, { method: 'POST' });
+                
+                // Если сервер почему-то лёг или вернул ошибку, откатываем изменения назад
+                if (!response.ok) {
+                    throw new Error("Server rejected request");
+                }
+            } catch (err) { 
+                console.error("Like tracking failed, rolling back UI:", err);
+                // Откат значения при ошибке сети
+                currentLikesCount = Math.max(0, currentLikesCount - 1);
+                likesTextNode.innerText = currentLikesCount;
+                
+                // Эффект тряски кнопки при сбое фиксации лайка
+                likeBtnEl.classList.add('shake');
+                setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
+            }
         });
 
         // ГАРАНТИРОВАННЫЙ ОНЛАЙН СИНХРОНИЗИРОВАННЫЙ С ВЕБ-СОКЕТОМ
