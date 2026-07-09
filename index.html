@@ -15,319 +15,66 @@
             --error: #7f1d1d;
             --success: #15803d;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px 20px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-user-select: none;
-            user-select: none;
+            background-color: var(--bg-color); color: var(--text-main); min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 20px;
+            overflow-x: hidden; overflow-y: auto; -webkit-user-select: none; user-select: none;
         }
-
-        header {
-            width: 100%;
-            max-width: 700px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-        }
-
-        .stats {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        .stats strong {
-            color: var(--accent);
-        }
-
+        header { width: 100%; max-width: 700px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .stats { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 1px; }
+        .stats strong { color: var(--accent); }
         main {
-            width: 100%;
-            max-width: 600px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 50px 40px;
-            border-radius: 2px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            text-align: center;
-            position: relative;
+            width: 100%; max-width: 600px; background: var(--card-bg); border: 1px solid var(--border);
+            padding: 50px 40px; border-radius: 2px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; position: relative;
         }
-
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        h1 {
-            font-size: 1.6rem;
-            letter-spacing: 5px;
-            margin-bottom: 30px;
-            color: #fff;
-            position: relative;
-            z-index: 20;
-        }
-
-        p {
-            color: var(--text-main);
-            line-height: 1.8;
-            margin-bottom: 35px;
-            font-size: 0.95rem;
-            text-align: justify;
-            text-justify: inter-word;
-            position: relative;
-            z-index: 20;
-        }
-
+        .screen { display: none; }
+        .screen.active { display: block; }
+        h1 { font-size: 1.6rem; letter-spacing: 5px; margin-bottom: 30px; color: #fff; position: relative; z-index: 20; }
+        p { color: var(--text-main); line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; text-align: justify; position: relative; z-index: 20; }
         input[type="text"] {
-            width: 100%;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            padding: 15px;
-            color: #fff;
-            margin-bottom: 25px;
-            outline: none;
-            text-align: center;
-            letter-spacing: 2px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            -webkit-user-select: text;
-            user-select: text;
-            position: relative;
-            z-index: 20;
+            width: 100%; background: var(--bg-color); border: 1px solid var(--border); padding: 15px; color: #fff;
+            margin-bottom: 25px; outline: none; text-align: center; letter-spacing: 2px; font-size: 1.1rem;
+            transition: all 0.3s ease; -webkit-user-select: text; user-select: text; position: relative; z-index: 20;
         }
-
-        input[type="text"]:focus {
-            border-color: var(--accent);
-            background: #09090b;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 20;
-        }
-
+        input[type="text"]:focus { border-color: var(--accent); background: #09090b; }
+        .btn-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; position: relative; z-index: 20; }
         .btn {
-            background: none;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 15px 35px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 3px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            pointer-events: auto;
+            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 15px 35px;
+            cursor: pointer; font-weight: bold; letter-spacing: 3px; transition: all 0.3s; font-size: 0.9rem;
             touch-action: manipulation;
         }
-
-        .btn:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(188, 152, 85, 0.4);
-        }
-
-        .btn.secondary {
-            border-color: var(--text-muted);
-            color: var(--text-muted);
-        }
-
-        .btn.secondary:hover {
-            background: var(--text-muted);
-            color: var(--bg-color);
-        }
-
+        .btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
+        .btn.secondary { border-color: var(--text-muted); color: var(--text-muted); }
+        .btn.secondary:hover { background: var(--text-muted); color: var(--bg-color); }
+        
         .clicker-btn {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 2px dashed var(--accent);
-            background: none;
-            color: var(--accent);
-            font-size: 2rem;
-            cursor: pointer;
-            margin: 20px auto;
-            display: none;
-            transition: all 0.2s ease;
-            touch-action: none;
-            position: relative;
-            z-index: 20;
+            width: 100px; height: 100px; border-radius: 50%; border: 2px dashed var(--accent); background: none;
+            color: var(--accent); font-size: 2rem; cursor: pointer; margin: 20px auto; display: none;
+            transition: all 0.2s; touch-action: none; position: relative; z-index: 20;
         }
+        .clicker-btn:active { background: rgba(188, 152, 85, 0.2); transform: scale(0.95); }
         
-        .clicker-btn.holding {
-            border-style: solid;
-            box-shadow: 0 0 20px rgba(188, 152, 85, 0.3);
-        }
+        #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; }
         
-        .clicker-btn.dash-ready {
-            color: #fff;
-            border-color: #fff;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-        }
-
-        .clicker-btn:active {
-            transform: scale(0.92);
-        }
-
-        #void-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 5;
-            cursor: crosshair;
-            display: none;
-            touch-action: none;
-        }
-
-        .hint-box {
-            display: none; 
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px dashed var(--border);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            line-height: 1.5;
-            text-align: left;
-            position: relative;
-            z-index: 20;
-        }
-
-        .hint-box.visible {
-            display: block; 
-        }
-
-        .hint-box strong {
-            color: var(--text-main);
-        }
-
+        .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
+        .hint-box.visible { display: block; }
         .modal-overlay {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 5, 7, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            visibility: hidden; 
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 7, 0.9);
+            z-index: 1000; justify-content: center; align-items: center; opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-            visibility: visible;
-        }
-
-        .modal-card {
-            background: var(--card-bg);
-            border: 1px solid var(--success);
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(21, 128, 61, 0.2);
-        }
-
-        .modal-card h2 {
-            color: #22c55e;
-            font-size: 1.4rem;
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-        }
-
-        .modal-card p {
-            margin-bottom: 25px;
-        }
-
-        .share-section {
-            margin-top: 35px;
-            padding-top: 25px;
-            border-top: 1px dashed var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .qr-frame {
-            background: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            width: 170px;
-            height: 170px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-
-        .qr-frame img {
-            width: 150px;
-            height: 150px;
-        }
-
-        footer {
-            margin-top: 40px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .like-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .like-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .shake {
-            animation: shake 0.4s ease-in-out;
-            border-color: var(--error) !important;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; visibility: visible; }
+        .modal-card { background: var(--card-bg); border: 1px solid var(--success); padding: 40px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(21, 128, 61, 0.2); }
+        .modal-card h2 { color: #22c55e; font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
+        .modal-card p { margin-bottom: 25px; }
+        .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        .qr-frame img { width: 150px; height: 150px; }
+        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; }
+        .like-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s; }
+        .like-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
     </style>
 </head>
 <body>
@@ -342,7 +89,7 @@
 
         <div id="start-screen" class="screen active">
             <h1>AENIGMA <span style="color: var(--accent);">[Mark 2.3]</span></h1>
-            <p>Welcome to the 23-level module. Levels 1-15 contain logical riddles. Levels 16-23 enter the "HELL SECTOR" — ancient ciphers, raw interactive action, zero hints, minimal text. Neural networks cannot parse this sector. Good luck.</p>
+            <p>Welcome to the 23-level module. Levels 1-15 contain logical riddles. Levels 16-23 enter the "HELL SECTOR" -- ancient ciphers, raw interactive action, zero hints, minimal text. Neural networks cannot parse this sector. Good luck.</p>
             <button class="btn" onclick="window.startGame()">INITIALIZE</button>
         </div>
 
@@ -350,7 +97,7 @@
             <h1 id="level-title">LEVEL X</h1>
             <div id="level-desc" style="white-space: pre-line; line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; position: relative; z-index: 20;">Loading...</div>
             
-            <button id="clicker-node" class="clicker-btn">📡</button>
+            <button id="clicker-node" class="clicker-btn">⚡</button>
             <input type="text" id="user-answer" placeholder="ENTER SOLUTION..." autocomplete="off">
             
             <div class="btn-container" id="control-block">
@@ -365,17 +112,13 @@
         <div id="victory-screen" class="screen">
             <h1>GOD MODE ENGAGED</h1>
             <p>Unbelievable. You conquered all 23 layers, bypassing the anti-AI sector. You have proven absolute cognitive dominance over machine logic.</p>
-            
             <div class="btn-container">
                 <button class="btn" id="restart-btn">RESTART MODULE</button>
                 <button class="btn secondary" id="share-btn">COPY SHARE LINK</button>
             </div>
-
             <div class="share-section">
                 <div class="stats">CHALLENGE YOUR FRIENDS:</div>
-                <div class="qr-frame">
-                    <img id="qr-code-img" src="" alt="Loading QR...">
-                </div>
+                <div class="qr-frame"><img id="qr-code-img" src="" alt="Loading QR..."></div>
             </div>
         </div>
     </main>
@@ -401,47 +144,31 @@
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
             authDomain: "aenigma-mark-23.firebaseapp.com",
             databaseURL: "https://aenigma-mark-23-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "aenigma-mark-23",
-            storageBucket: "aenigma-mark-23.firebasestorage.app",
-            messagingSenderId: "318632324088",
-            appId: "1:318632324088:web:c9ff426bac663a64ca840d"
+            projectId: "aenigma-mark-23", storageBucket: "aenigma-mark-23.firebasestorage.app",
+            messagingSenderId: "318632324088", appId: "1:318632324088:web:c9ff426bac663a64ca840d"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         const API_URL = "https://aenigma-server.onrender.com"; 
 
         const likesRef = ref(db, 'counters/likes');
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
 
-        onValue(likesRef, (snapshot) => {
-            document.getElementById('likes-count').innerText = snapshot.val() || 0;
-        });
-
-        document.getElementById('like-btn').addEventListener('click', () => {
-            runTransaction(likesRef, (currentLikes) => (currentLikes || 0) + 1);
-        });
+        onValue(likesRef, (snap) => { document.getElementById('likes-count').innerText = snap.val() || 0; });
+        document.getElementById('like-btn').addEventListener('click', () => { runTransaction(likesRef, (c) => (c || 0) + 1); });
 
         const myUserRef = push(onlineUsersRef);
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                set(myUserRef, true);
-                onDisconnect(myUserRef).remove();
-            }
-        });
-
-        onValue(onlineUsersRef, (snap) => {
-            document.getElementById('online-count').innerText = snap.numChildren();
-        });
+        onValue(connectedRef, (snap) => { if (snap.val() === true) { set(myUserRef, true); onDisconnect(myUserRef).remove(); } });
+        onValue(onlineUsersRef, (snap) => { document.getElementById('online-count').innerText = snap.numChildren(); });
 
         let currentLevelIndex = 0;
         let wrongAttempts = 0;
         let clickPattern = [];
+        let strokePoints = [];
         let kineticAnimationFrameId = null;
-        let morseTimerId = null;
-        let serverLevelData = null; 
+        let serverLevelData = null;
 
         window.startGame = function() {
             document.getElementById('start-screen').classList.remove('active');
@@ -450,25 +177,14 @@
         }
 
         async function loadLevelFromServer() {
-            if (kineticAnimationFrameId) {
-                cancelAnimationFrame(kineticAnimationFrameId);
-                kineticAnimationFrameId = null;
-            }
-            if (morseTimerId) {
-                clearTimeout(morseTimerId);
-                morseTimerId = null;
-            }
+            if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
 
             try {
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
                 const data = await response.json();
 
-                if (data.finished) {
-                    showVictoryScreen();
-                    return;
-                }
-
-                serverLevelData = data; 
+                if (data.finished) { showVictoryScreen(); return; }
+                serverLevelData = data;
 
                 document.getElementById('level-title').textContent = data.title;
                 document.getElementById('level-desc').textContent = data.desc;
@@ -479,46 +195,27 @@
                 const ctrlBlock = document.getElementById('control-block');
                 const canvas = document.getElementById('void-canvas');
 
-                inputField.style.display = 'block';
-                inputField.value = '';
-                clickBtn.style.display = 'none';
-                ctrlBlock.style.display = 'flex';
-                canvas.style.display = 'none';
-                canvas.style.pointerEvents = 'auto'; 
+                inputField.style.display = 'block'; inputField.value = '';
+                clickBtn.style.display = 'none'; ctrlBlock.style.display = 'flex';
+                canvas.style.display = 'none'; canvas.style.pointerEvents = 'auto'; 
                 
                 wrongAttempts = 0;
                 document.getElementById('attempt-counter').textContent = "0";
                 document.getElementById('hint-box').classList.remove('visible');
 
                 if (data.type === "CLICKER") {
-                    inputField.style.display = 'none';
-                    ctrlBlock.style.display = 'none';
-                    clickBtn.style.display = 'block';
+                    inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block';
                     setupClicker();
                 } else if (data.type === "CANVAS") {
-                    inputField.style.display = 'none';
-                    ctrlBlock.style.display = 'none';
-                    canvas.style.display = 'block';
+                    inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; canvas.style.display = 'block';
                     setupCanvas();
-                } else if (data.title === "LEVEL 23" || data.type === "KINETIC") {
-                    canvas.style.display = 'block';
-                    canvas.style.pointerEvents = 'none'; 
+                } else if (data.type === "KINETIC") {
+                    canvas.style.display = 'block'; canvas.style.pointerEvents = 'none'; 
                     setupKineticGhost();
                 }
 
-                if (data.title && data.title.includes("18")) { 
-                    const now = new Date();
-                    const hours = String(now.getUTCHours()).padStart(2, '0');
-                    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
-                    inputField.value = hours + minutes; 
-                }
-
-                if (inputField.style.display !== 'none') {
-                    inputField.focus();
-                }
-            } catch (err) {
-                console.error("Failed to load level data:", err);
-            }
+                if (inputField.style.display !== 'none') inputField.focus();
+            } catch (err) { console.error(err); }
         }
 
         async function sendAnswerToServer(answerString, rawData = null) {
@@ -526,32 +223,18 @@
                 const response = await fetch(`${API_URL}/checkAnswer`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        index: currentLevelIndex, 
-                        answer: answerString,
-                        rawData: rawData 
-                    })
+                    body: JSON.stringify({ index: currentLevelIndex, answer: answerString, rawData: rawData })
                 });
                 const result = await response.json();
-
-                if (result.success) {
-                    triggerSuccess();
-                } else {
-                    triggerFail();
-                }
-            } catch (err) {
-                console.error("Verification error:", err);
-            }
+                if (result.success) triggerSuccess(); else triggerFail();
+            } catch (err) { console.error(err); }
         }
 
         async function submitAnswer() {
             const inputField = document.getElementById('user-answer');
             if (inputField.style.display === 'none') return;
-
-            let userAns = inputField.value;
-            if (userAns.trim() === "") return;
-
-            await sendAnswerToServer(userAns);
+            if (inputField.value.trim() === "") return;
+            await sendAnswerToServer(inputField.value);
         }
 
         function triggerSuccess() {
@@ -560,28 +243,15 @@
         }
 
         function triggerFail() {
-            const inputField = document.getElementById('user-answer');
-            const clickBtn = document.getElementById('clicker-node');
-            
-            if (inputField.style.display !== 'none') {
-                inputField.classList.add('shake');
-                setTimeout(() => inputField.classList.remove('shake'), 400);
-            } else if (clickBtn.style.display !== 'none') {
-                clickBtn.classList.add('shake');
-                setTimeout(() => clickBtn.classList.remove('shake'), 400);
-            }
-            
-            wrongAttempts++;
-            document.getElementById('attempt-counter').textContent = wrongAttempts;
-            if (wrongAttempts >= 10 && currentLevelIndex < 15) {
-                document.getElementById('hint-box').classList.add('visible');
-            }
+            const el = document.getElementById('user-answer').style.display !== 'none' ? document.getElementById('user-answer') : document.getElementById('clicker-node');
+            el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
+            wrongAttempts++; document.getElementById('attempt-counter').textContent = wrongAttempts;
+            if (wrongAttempts >= 10 && currentLevelIndex < 15) document.getElementById('hint-box').classList.add('visible');
         }
 
         function nextLevel() {
             document.getElementById('success-modal').classList.remove('active');
-            currentLevelIndex++;
-            loadLevelFromServer();
+            currentLevelIndex++; loadLevelFromServer();
         }
 
         function showVictoryScreen() {
@@ -592,68 +262,46 @@
             generateQR();
         }
 
+        // Передача чистых интервалов клика в миллисекундах
         function setupClicker() {
             clickPattern = [];
             const clickBtn = document.getElementById('clicker-node');
             let lastClickTime = 0;
             
-            clickBtn.className = "clicker-btn"; 
-
-            clickBtn.onmousedown = clickBtn.ontouchstart = (e) => {
-                e.preventDefault();
-                lastClickTime = Date.now();
-                clickBtn.classList.add('holding');
-                
-                if (morseTimerId) clearTimeout(morseTimerId);
-                morseTimerId = setTimeout(() => {
-                    clickBtn.classList.add('dash-ready');
-                }, 220);
-            };
-
+            clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { e.preventDefault(); lastClickTime = Date.now(); };
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
                 e.preventDefault();
-                if (morseTimerId) clearTimeout(morseTimerId);
-                
                 const duration = Date.now() - lastClickTime;
-                clickBtn.classList.remove('holding', 'dash-ready');
-                
-                clickPattern.push(duration > 220 ? '-' : '.');
+                clickPattern.push(duration);
                 if (clickPattern.length > 9) clickPattern.shift();
                 
                 if (clickPattern.length === 9) {
-                    await sendAnswerToServer(null, { morsePattern: clickPattern.join('') });
+                    await sendAnswerToServer(null, { timings: clickPattern });
                 }
             };
         }
 
+        // Передача чистого трека координат свайпа
         function setupCanvas() {
             const canvas = document.getElementById('void-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
+            let drawing = false;
 
-            let drawing = false, crossedLeft = false, crossedRight = false;
-
-            canvas.onmousedown = canvas.ontouchstart = (e) => { 
-                e.preventDefault();
-                drawing = true; crossedLeft = false; crossedRight = false; 
+            canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
+            canvas.onmouseup = canvas.ontouchend = async (e) => { 
+                e.preventDefault(); drawing = false; ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                if (strokePoints.length > 3) {
+                    await sendAnswerToServer(null, { points: strokePoints, width: canvas.width });
+                }
             };
-            canvas.onmouseup = canvas.ontouchend = (e) => { 
-                e.preventDefault();
-                drawing = false; ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            };
-            canvas.onmousemove = canvas.ontouchmove = async (e) => {
-                if (!drawing) return;
-                e.preventDefault();
+            canvas.onmousemove = canvas.ontouchmove = (e) => {
+                if (!drawing) return; e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                const x = clientX - rect.left;
-                if (x < 40) crossedLeft = true;
-                if (x > canvas.width - 40) crossedRight = true;
-                if (crossedLeft && crossedRight) { 
-                    drawing = false; 
-                    await sendAnswerToServer(null, { type: "SWIPE", crossedLeft: true, crossedRight: true }); 
-                }
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                strokePoints.push({ x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) });
             };
         }
 
@@ -665,7 +313,6 @@
 
             const matrixCoefficients = serverLevelData?.matrixCoefficients || [];
             const letterGroups = serverLevelData?.letterGroups || [];
-            
             if (!matrixCoefficients.length) return;
 
             const lines = [];
@@ -682,16 +329,14 @@
                 let m = Infinity;
                 for (let i = 0; i < activeGroup.length; i++) {
                     const lineIdx = activeGroup[i];
+                    if (!lines[lineIdx]) continue;
                     const [x1_base, y1, x2_base, y2] = lines[lineIdx];
                     const x1 = x1_base + xOffset, x2 = x2_base + xOffset;
                     const A = x - x1, B = y - y1, C = x2 - x1, D = y2 - y1;
                     const dot = A * C + B * D, len = C * C + D * D;
-                    let p = -1;
-                    if (len !== 0) p = dot / len;
+                    let p = -1; if (len !== 0) p = dot / len;
                     let xx, yy;
-                    if (p < 0) { xx = x1; yy = y1; }
-                    else if (p > 1) { xx = x2; yy = y2; }
-                    else { xx = x1 + p * C; yy = y1 + p * D; }
+                    if (p < 0) { xx = x1; yy = y1; } else if (p > 1) { xx = x2; yy = y2; } else { xx = x1 + p * C; yy = y1 + p * D; }
                     const dist = Math.sqrt((x - xx)**2 + (y - yy)**2);
                     if (dist < m) m = dist;
                 }
@@ -699,88 +344,45 @@
             }
 
             function processFrame() {
-                if (currentLevelIndex !== 22) return;
+                if (!serverLevelData || serverLevelData.type !== "KINETIC") return;
+                ctx.fillStyle = 'rgba(12, 12, 14, 0.25)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                ctx.fillStyle = 'rgba(12, 12, 14, 0.25)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                const time = performance.now();
-                const interval = 2000;
+                const time = performance.now(); const interval = 2000;
                 const currentLetterIdx = Math.floor((time / interval) % letterGroups.length);
                 const activeGroup = letterGroups[currentLetterIdx];
                 const progress = (time % interval) / interval;
-                const xOffset = (0.5 - progress) * 80; 
-                const density = 3000; 
+                const xOffset = (0.5 - progress) * 80; const density = 3000; 
 
                 for (let i = 0; i < density; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
+                    const x = Math.random() * canvas.width; const y = Math.random() * canvas.height;
                     const d = getFieldDistance(x, y, activeGroup, xOffset);
                     let a = Math.random() * 0.12;
 
                     if (d < 8) {
                         const wave = Math.sin(time * 0.008 + (x * 0.03));
-                        if (wave > -0.3) {
-                            a = 0.6 + Math.random() * 0.4;
-                        } else {
-                            a = Math.random() * 0.05;
-                        }
+                        if (wave > -0.3) a = 0.6 + Math.random() * 0.4; else a = Math.random() * 0.05;
                     }
-                    ctx.fillStyle = `rgba(188, 152, 85, ${a})`;
-                    ctx.fillRect(x, y, 1.5, 1.5);
+                    ctx.fillStyle = `rgba(188, 152, 85, ${a})`; ctx.fillRect(x, y, 1.5, 1.5);
                 }
                 kineticAnimationFrameId = requestAnimationFrame(processFrame);
             }
             processFrame();
         }
 
-        function getCleanUrl() {
-            let currentUrl = window.location.href;
-            return currentUrl.startsWith('file://') ? 'https://google.com' : currentUrl;
-        }
-
-        function generateQR() {
-            try {
-                const targetUrl = getCleanUrl();
-                const qrImg = document.getElementById('qr-code-img');
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(targetUrl)}&color=bc9855&bgcolor=0c0c0e`;
-            } catch(e) { console.error(e); }
-        }
-
+        function getCleanUrl() { return window.location.href.startsWith('file://') ? 'https://google.com' : window.location.href; }
+        function generateQR() { try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=bc9855&bgcolor=0c0c0e`; } catch(e){} }
         function copyShareLink() {
-            const currentUrl = window.location.href;
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(currentUrl).then(() => alert("Game link copied!"))
-                .catch(() => fallbackCopy(currentUrl));
-            } else { fallbackCopy(currentUrl); }
+            const u = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
         }
-
-        function fallbackCopy(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text; textArea.style.position = "fixed"; 
-            document.body.appendChild(textArea); textArea.focus(); textArea.select();
-            try { document.execCommand('copy'); alert("Game link copied!"); } 
-            catch (err) { alert("Current URL: " + text); }
-            document.body.removeChild(textArea);
-        }
-
-        function resetGame() {
-            currentLevelIndex = 0; wrongAttempts = 0; serverLevelData = null;
-            document.getElementById('victory-screen').classList.remove('active');
-            document.getElementById('start-screen').classList.add('active');
-        }
+        function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
+        function resetGame() { currentLevelIndex = 0; wrongAttempts = 0; serverLevelData = null; document.getElementById('victory-screen').classList.remove('active'); document.getElementById('start-screen').classList.add('active'); }
 
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
         document.getElementById('modal-continue-btn').addEventListener('click', nextLevel);
         document.getElementById('restart-btn').addEventListener('click', resetGame);
         document.getElementById('share-btn').addEventListener('click', copyShareLink);
-
-        document.getElementById('user-answer').addEventListener('keydown', async function(e) {
-            if (e.key === 'Enter') {
-                if (document.getElementById('success-modal').classList.contains('active')) { nextLevel(); } 
-                else { await submitAnswer(); }
-            }
-        });
+        document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') { if (document.getElementById('success-modal').classList.contains('active')) nextLevel(); else await submitAnswer(); } });
     </script>
 </body>
 </html>
