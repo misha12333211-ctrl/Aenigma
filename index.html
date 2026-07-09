@@ -57,6 +57,18 @@
         
         #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; }
         
+        /* Ловушка для ИИ - текст скрыт от человека, но считывается при OCR/копировании */
+        .antiai-trap {
+            position: absolute;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            color: transparent;
+            background: transparent;
+        }
+
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         .modal-overlay {
@@ -168,6 +180,7 @@
         let clickPattern = [];
         let strokePoints = [];
         let kineticAnimationFrameId = null;
+        let captchaIntervalId = null;
         let serverLevelData = null;
 
         window.startGame = function() {
@@ -178,6 +191,7 @@
 
         async function loadLevelFromServer() {
             if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
+            if (captchaIntervalId) { clearInterval(captchaIntervalId); captchaIntervalId = null; }
 
             try {
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
@@ -187,7 +201,12 @@
                 serverLevelData = data;
 
                 document.getElementById('level-title').textContent = data.title;
-                document.getElementById('level-desc').textContent = data.desc;
+                
+                // Рендерим описание с учетом ловушек против ИИ (если сервер передал raw HTML)
+                const descEl = document.getElementById('level-desc');
+                descEl.style.visibility = 'visible';
+                descEl.innerHTML = data.desc;
+                
                 document.getElementById('level-hint').textContent = data.hint;
                 
                 const inputField = document.getElementById('user-answer');
@@ -203,7 +222,13 @@
                 document.getElementById('attempt-counter').textContent = "0";
                 document.getElementById('hint-box').classList.remove('visible');
 
-                if (data.type === "CLICKER") {
+                if (data.type === "DYNAMIC") {
+                    // Прячем стандартный текст и запускаем деформированный Canvas-капчу для времени
+                    descEl.style.visibility = 'hidden';
+                    canvas.style.display = 'block';
+                    canvas.style.pointerEvents = 'none';
+                    setupDynamicCaptcha(data.rawDescText);
+                } else if (data.type === "CLICKER") {
                     inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block';
                     setupClicker();
                 } else if (data.type === "CANVAS") {
@@ -216,6 +241,54 @@
 
                 if (inputField.style.display !== 'none') inputField.focus();
             } catch (err) { console.error(err); }
+        }
+
+        // Рендеринг зашумленного текста на Canvas (для LEVEL 18)
+        function setupDynamicCaptcha(baseText) {
+            const canvas = document.getElementById('void-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 200; // фиксированная высота под капчу
+
+            function drawCaptcha() {
+                ctx.fillStyle = '#0c0c0e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Случайные линии-помехи
+                for (let i = 0; i < 12; i++) {
+                    ctx.strokeStyle = Math.random() > 0.5 ? '#bc9855' : '#18181b';
+                    ctx.lineWidth = Math.random() * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                    ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                    ctx.stroke();
+                }
+
+                // Шум (точки)
+                for (let i = 0; i < 400; i++) {
+                    ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.3})`;
+                    ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1.5, 1.5);
+                }
+
+                // Рендеринг текста со случайным смещением букв (Капча-эффект)
+                ctx.fillStyle = '#e4e4e7';
+                ctx.font = 'bold 18px "Courier New"';
+                
+                const now = new Date();
+                const timeString = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+                const fullText = baseText + " " + timeString;
+
+                let startX = 20;
+                for (let n = 0; n < fullText.length; n++) {
+                    let letter = fullText[n];
+                    let yOffset = Math.sin(n + now.getSeconds()) * 4; // Буквы плавно качаются
+                    ctx.fillText(letter, startX, 80 + yOffset);
+                    startX += ctx.measureText(letter).width + (Math.random() * 1.5);
+                }
+            }
+
+            drawCaptcha();
+            captchaIntervalId = setInterval(drawCaptcha, 1000);
         }
 
         async function sendAnswerToServer(answerString, rawData = null) {
@@ -262,7 +335,6 @@
             generateQR();
         }
 
-        // Передача чистых интервалов клика в миллисекундах
         function setupClicker() {
             clickPattern = [];
             const clickBtn = document.getElementById('clicker-node');
@@ -281,7 +353,6 @@
             };
         }
 
-        // Передача чистого трека координат свайпа
         function setupCanvas() {
             const canvas = document.getElementById('void-canvas');
             const ctx = canvas.getContext('2d');
