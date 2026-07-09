@@ -141,7 +141,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, onDisconnect, set } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
@@ -159,57 +159,60 @@
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
 
-        // Глобальное хранилище текущего количества лайков для синхронизации
-        let currentLikesCount = 0;
-
-        // Чтение количества лайков из БД по-прежнему доступно всем
+        // Слушатель лайков в реальном времени (сохраняются при обновлении)
         onValue(likesRef, (snap) => { 
-            currentLikesCount = snap.val() || 0;
-            document.getElementById('likes-count').innerText = currentLikesCount; 
+            const serverLikes = snap.val() || 0;
+            document.getElementById('likes-count').innerText = serverLikes; 
         });
 
-        // Железобетонное добавление лайков с мгновенным визуальным откликом на экране
+        // Безопасный клик лайка напрямую через Firebase транзакции + защита от накрутки
         document.getElementById('like-btn').addEventListener('click', async () => {
-            const likesTextNode = document.getElementById('likes-count');
             const likeBtnEl = document.getElementById('like-btn');
             
-            // 1. Оптимистичное мгновенное увеличение на клиенте
-            currentLikesCount++;
-            likesTextNode.innerText = currentLikesCount;
-
-            try {
-                // 2. Отправка скрытого запроса на бэкенд
-                const response = await fetch(`${API_URL}/addLike`, { method: 'POST' });
-                
-                // Если сервер почему-то лёг или вернул ошибку, откатываем изменения назад
-                if (!response.ok) {
-                    throw new Error("Server rejected request");
-                }
-            } catch (err) { 
-                console.error("Like tracking failed, rolling back UI:", err);
-                // Откат значения при ошибке сети
-                currentLikesCount = Math.max(0, currentLikesCount - 1);
-                likesTextNode.innerText = currentLikesCount;
-                
-                // Эффект тряски кнопки при сбое фиксации лайка
+            if (localStorage.getItem('aenigma_liked')) {
+                // Если пользователь уже нажимал лайк — кнопка затрясется
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
+                return;
+            }
+
+            likeBtnEl.style.pointerEvents = 'none';
+
+            try {
+                // Атомарная транзакция Firebase исключает баги конкурентных запросов
+                await runTransaction(likesRef, (currentValue) => {
+                    return (currentValue || 0) + 1;
+                });
+                
+                // Фиксируем голос на клиенте
+                localStorage.setItem('aenigma_liked', 'true');
+                likeBtnEl.style.color = 'var(--accent)';
+                likeBtnEl.style.borderColor = 'var(--accent)';
+            } catch (err) { 
+                console.error("Like transaction failed:", err);
+                likeBtnEl.classList.add('shake');
+                setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
+            } finally {
+                likeBtnEl.style.pointerEvents = 'auto';
             }
         });
+
+        // Если пользователь лайкал в прошлую сессию, подсвечиваем кнопку сразу
+        if (localStorage.getItem('aenigma_liked')) {
+            document.getElementById('like-btn').style.color = 'var(--accent)';
+            document.getElementById('like-btn').style.borderColor = 'var(--accent)';
+        }
 
         // ГАРАНТИРОВАННЫЙ ОНЛАЙН СИНХРОНИЗИРОВАННЫЙ С ВЕБ-СОКЕТОМ
         let myUserRef = null;
         onValue(connectedRef, (snap) => {
             if (snap.val() === true) {
-                // Генерируем уникальный токен нахождения на сайте только после физического коннекта
                 myUserRef = push(onlineUsersRef);
                 set(myUserRef, true);
-                // Удаляем сессию при дисконнекте
                 onDisconnect(myUserRef).remove();
             }
         });
 
-        // Безопасный слушатель счетчика онлайна с защитой от ошибок типов данных Firebase
         onValue(onlineUsersRef, (snap) => {
             try {
                 const data = typeof snap.val === 'function' ? snap.val() : snap;
