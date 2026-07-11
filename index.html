@@ -58,9 +58,6 @@
         
         #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; }
         
-        .antiai-trap {
-            position: absolute; overflow: hidden; clip: rect(0, 0, 0, 0); width: 1px; height: 1px; margin: -1px; color: transparent; background: transparent;
-        }
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         .modal-overlay {
@@ -337,7 +334,7 @@
             }
         }
 
-        async function submitAnswer() {
+        window.submitAnswer = async function() {
             if (isSubmitting) return;
 
             const inputField = document.getElementById('user-answer');
@@ -375,22 +372,29 @@
         }
 
         function triggerFail() {
-            const el = document.getElementById('user-answer').style.display !== 'none' ? document.getElementById('user-answer') : document.getElementById('clicker-node');
-            el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
-            wrongAttempts++; document.getElementById('attempt-counter').textContent = wrongAttempts;
+            const isTextVisible = document.getElementById('user-answer').style.display !== 'none';
+            const el = isTextVisible ? document.getElementById('user-answer') : document.getElementById('clicker-node');
+            
+            if (el) {
+                el.classList.add('shake'); 
+                setTimeout(() => el.classList.remove('shake'), 400);
+            }
+            
+            wrongAttempts++; 
+            document.getElementById('attempt-counter').textContent = wrongAttempts;
             if (wrongAttempts >= 10 && currentLevelIndex < 15) document.getElementById('hint-box').classList.add('visible');
 
             isSubmitting = false;
             document.getElementById('sub-btn').disabled = false;
         }
 
-        function nextLevel() {
-            if (isSubmitting) return;
-            isSubmitting = true;
-            document.getElementById('sub-btn').disabled = true;
+        window.nextLevel = function() {
+            isSubmitting = false;
+            document.getElementById('sub-btn').disabled = false;
 
             document.getElementById('success-modal').classList.remove('active');
-            currentLevelIndex++; loadLevelFromServer();
+            currentLevelIndex++; 
+            loadLevelFromServer();
         }
 
         async function showVictoryScreen() {
@@ -433,6 +437,8 @@
         function setupCanvas() {
             const canvas = document.getElementById('void-canvas');
             const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
             let drawing = false;
 
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
@@ -532,13 +538,14 @@
 
         function getCleanUrl() { return window.location.href.startsWith('file://') ? 'https://google.com' : window.location.href; }
         function generateQR() { try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=bc9855&bgcolor=0c0c0e`; } catch(e){} }
-        function copyShareLink() {
+        
+        window.copyShareLink = function() {
             const u = window.location.href;
             if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
         }
         function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
         
-        function resetGame() { 
+        window.resetGame = function() { 
             currentLevelIndex = 0; 
             wrongAttempts = 0; 
             isSubmitting = false; 
@@ -549,16 +556,16 @@
             window.updateMyLevelStatus(-1);
         }
 
-        document.getElementById('sub-btn').addEventListener('click', submitAnswer);
-        document.getElementById('modal-continue-btn').addEventListener('click', nextLevel);
-        document.getElementById('restart-btn').addEventListener('click', resetGame);
-        document.getElementById('share-btn').addEventListener('click', copyShareLink);
+        document.getElementById('sub-btn').addEventListener('click', window.submitAnswer);
+        document.getElementById('modal-continue-btn').addEventListener('click', window.nextLevel);
+        document.getElementById('restart-btn').addEventListener('click', window.resetGame);
+        document.getElementById('share-btn').addEventListener('click', window.copyShareLink);
         document.getElementById('user-answer').addEventListener('keydown', async (e) => { 
             if (e.key === 'Enter') { 
                 if (document.getElementById('success-modal').classList.contains('active')) {
-                    nextLevel(); 
+                    window.nextLevel(); 
                 } else {
-                    await submitAnswer(); 
+                    await window.submitAnswer(); 
                 }
             } 
         });
