@@ -130,6 +130,8 @@
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
+            <!-- Перенесенная статистика наверх модалки -->
+            <div class="stats" style="margin-bottom: 20px; font-weight: bold;">ON THIS LAYER: <strong id="modal-layer-online-count">0</strong></div>
             <h2>ACCESS GRANTED</h2>
             <p id="modal-message">...</p>
             <button class="btn" id="modal-continue-btn">CONTINUE</button>
@@ -251,10 +253,12 @@
                 } 
                 document.getElementById('online-count').innerText = totalOnline;
                 document.getElementById('layer-online-count').innerText = layerOnline;
+                document.getElementById('modal-layer-online-count').innerText = layerOnline; // Синхронизация с модалкой
             } catch (err) {
                 console.error("Online formatting fail fallback engaged:", err);
                 document.getElementById('online-count').innerText = 1;
                 document.getElementById('layer-online-count').innerText = 1;
+                document.getElementById('modal-layer-online-count').innerText = 1;
             }
         });
 
@@ -357,14 +361,13 @@
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
 
-            if (wrongAttempts % 9 === 0) {
-                const el = document.getElementById('user-answer').style.display !== 'none' 
-                    ? document.getElementById('user-answer') 
-                    : document.getElementById('clicker-node');
-                
-                el.classList.add('shake'); 
-                setTimeout(() => el.classList.remove('shake'), 400);
-            }
+            // Тряска срабатывает ВСЕГДА при неверном ответе
+            const el = document.getElementById('user-answer').style.display !== 'none' 
+                ? document.getElementById('user-answer') 
+                : document.getElementById('clicker-node');
+            
+            el.classList.add('shake'); 
+            setTimeout(() => el.classList.remove('shake'), 400);
 
             if (wrongAttempts >= 10 && currentLevelIndex < 15) {
                 document.getElementById('hint-box').classList.add('visible');
