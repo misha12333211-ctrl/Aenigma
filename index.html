@@ -286,7 +286,6 @@
         </div>
     </div>
 
-    <!-- ИСПРАВЛЕНО: Текстовое описание в Report модалке -->
     <div id="chat-report-modal" class="modal-overlay">
         <div class="modal-card chat-dialog-card" style="border-color: #f59e0b; max-width: 480px;">
             <h3 style="color: #f59e0b;">SUBMIT REPORT</h3>
@@ -375,26 +374,8 @@
         let serverLevelData = null;
         let myUserRef = null;
 
-        // ИСПРАВЛЕНО: Статус админа жестко изолирован в константе, проверяемой на старте сессии
-        const IS_CURRENT_USER_ADMIN = localStorage.getItem('is_admin') === 'true';
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const potentialPassword = urlParams.get('mod');
-        if (potentialPassword) {
-            fetch(`${API_URL}/adminLogin`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: potentialPassword })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem('is_admin', 'true');
-                    localStorage.setItem('admin_token', potentialPassword); 
-                    window.location.search = ""; 
-                }
-            }).catch(e => console.error(e));
-        }
+        // Безопасный статус сессии. Флаг синхронизируется только ответом от сервера
+        let isCurrentUserAdmin = localStorage.getItem('is_admin') === 'true';
 
         let myUserId = localStorage.getItem('chat_uid');
         if (!myUserId) {
@@ -402,7 +383,6 @@
             localStorage.setItem('chat_uid', myUserId);
         }
         
-        // ИСПРАВЛЕНО: Генерация дефолтного Guest_ID на случай пустого поля
         const getDefaultNickname = () => 'Guest_' + myUserId.split('_')[1];
         let myNickname = localStorage.getItem('chat_nick') || getDefaultNickname();
         document.getElementById('chat-nick-input').value = myNickname;
@@ -762,18 +742,43 @@
             return { valid: true };
         }
 
-        // ИСПРАВЛЕНО: Безопасное сохранение и очистка пустого никнейма
-        nickSaveBtn.addEventListener('click', () => {
+        // ЗАДАНИЕ 1: Модерация через ввод никнейма и серверную проверку
+        nickSaveBtn.addEventListener('click', async () => {
             const val = nickInput.value.trim();
             
-            if (!val || val.length < 3 || val.length > 16) {
+            if (!val) {
                 nickInput.classList.add('shake');
                 setTimeout(() => nickInput.classList.remove('shake'), 400);
-                // Если стёрли ник - сбрасываем на дефолтный
                 myNickname = getDefaultNickname();
                 localStorage.setItem('chat_nick', myNickname);
                 nickInput.value = myNickname;
-                triggerWarningModal("Никнейм сброшен. Никнейм должен содержать от 3 до 16 валидных символов и не быть пустым.");
+                return;
+            }
+
+            // Попытка авторизации как модератор
+            try {
+                const res = await fetch(`${API_URL}/adminLogin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: val })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    isCurrentUserAdmin = true;
+                    localStorage.setItem('is_admin', 'true');
+                    localStorage.setItem('admin_token', val);
+                    nickInput.style.borderColor = 'var(--success)';
+                    alert("РЕЖИМ МОДЕРАТОРА АКТИВИРОВАН.");
+                    nickInput.value = myNickname; // Возвращаем текущий ник в визуал
+                    return;
+                }
+            } catch(e) {}
+
+            // Стандартное сохранение обычного никнейма, если пароль не подошел
+            if (val.length < 3 || val.length > 16) {
+                nickInput.classList.add('shake');
+                setTimeout(() => nickInput.classList.remove('shake'), 400);
+                triggerWarningModal("Никнейм должен содержать от 3 до 16 валидных символов.");
                 return;
             }
 
@@ -823,6 +828,7 @@
             const msgText = chatMsgInput.value.trim();
             const check = validateText(msgText);
             
+            // ЗАДАНИЕ 2: Показ окна предупреждения при локальной ошибке валидации
             if (!check.valid) {
                 chatMsgInput.classList.add('shake');
                 setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
@@ -840,8 +846,9 @@
                 });
                 const data = await res.json();
                 
+                // ЗАДАНИЕ 2: Системное окно при серверной блокировке/бане
                 if (data.banned) {
-                    triggerWarningModal("Ваш ID заблокирован за нарушение правил.");
+                    triggerWarningModal("Ваш системный ID заблокирован за нарушение протоколов.");
                     isChatSendingLocked = false;
                     return;
                 }
@@ -849,7 +856,7 @@
                 if (!data.valid) {
                     chatMsgInput.classList.add('shake');
                     setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
-                    triggerWarningModal("Сообщение заблокировано фильтром безопасности.");
+                    triggerWarningModal("Сообщение заблокировано фильтром контента безопасности.");
                     isChatSendingLocked = false;
                     return;
                 }
@@ -916,8 +923,8 @@
                     actionsContainer.appendChild(reportLink);
                 }
 
-                // ИСПРАВЛЕНО: Теперь используется изолированная глобальная константа IS_CURRENT_USER_ADMIN
-                if (IS_CURRENT_USER_ADMIN) {
+                // Рендер админ-панели на основе динамического статуса
+                if (isCurrentUserAdmin) {
                     const adminDeleteLink = document.createElement('span');
                     adminDeleteLink.className = 'chat-action-link admin-link';
                     adminDeleteLink.innerText = '[Удалить]';
@@ -928,7 +935,6 @@
                     adminBanLink.innerText = '[Бан по ID]';
                     adminBanLink.onclick = () => adminBanUser(msg.uid);
 
-                    // НОВОЕ: Возможность разблокировать пользователя прямо из контекста
                     const adminUnbanLink = document.createElement('span');
                     adminUnbanLink.className = 'chat-action-link admin-link';
                     adminUnbanLink.style.color = '#10b981';
@@ -949,7 +955,14 @@
         async function adminDeleteMessage() {
             if (!activeTargetMsgId) return;
             try {
-                await remove(child(chatRef, activeTargetMsgId));
+                const token = localStorage.getItem('admin_token');
+                const res = await fetch(`${API_URL}/adminDeleteMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messageId: activeTargetMsgId, adminPassword: token })
+                });
+                const data = await res.json();
+                if(!data.success) alert("Ошибка удаления на сервере.");
             } catch(e) { console.error(e); }
         }
 
@@ -966,7 +979,6 @@
             } catch(e) { alert("Ошибка при блокировке."); }
         }
 
-        // НОВОЕ: Метод разблокировки (удаления из черного списка) на клиенте
         async function adminUnbanUser(targetUid) {
             if (!confirm(`Разблокировать пользователя ${targetUid}?`)) return;
             try {
@@ -1024,7 +1036,7 @@
         document.getElementById('chat-delete-cancel').onclick = () => deleteModal.classList.remove('active');
         document.getElementById('chat-delete-confirm').onclick = async () => {
             try {
-                await remove(child(child(chatRef, activeTargetMsgId)));
+                await remove(child(chatRef, activeTargetMsgId));
                 deleteModal.classList.remove('active');
             } catch(e) {}
         };
@@ -1032,12 +1044,12 @@
         let reportData = null;
         function openReportDialog(id, targetUid, user, text) {
             reportData = { id, targetUid, user, text };
-            document.getElementById('chat-report-text').value = ''; // Очищаем textarea
+            document.getElementById('chat-report-text').value = ''; 
             reportModal.classList.add('active');
         }
         document.getElementById('chat-report-cancel').onclick = () => reportModal.classList.remove('active');
         
-        // ИСПРАВЛЕНО: Отправка развернутой жалобы вместе с кастомным текстовым описанием
+        // ЗАДАНИЕ 3: Исправленная отправка репорта через сервер
         document.getElementById('chat-report-confirm').onclick = async () => {
             if(!reportData) return;
             const customComment = document.getElementById('chat-report-text').value.trim();
