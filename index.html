@@ -120,10 +120,6 @@
                     <button class="btn" id="restart-btn">RESTART MODULE</button>
                     <button class="btn secondary" id="share-btn">COPY SHARE LINK</button>
                 </div>
-                <!-- Кнопка доната Сбера -->
-                <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" style="text-decoration: none; width: 100%; max-width: 350px; margin-top: 5px;">
-                    <button class="btn" style="border-color: #22c55e; color: #22c55e; width: 100%; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);">SUPPORT PROJECT (DONATE)</button>
-                </a>
             </div>
             <div class="share-section">
                 <div class="stats">CHALLENGE YOUR FRIENDS:</div>
@@ -145,6 +141,11 @@
         <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
         <div class="stats">COMPLETED L24: <strong id="completed-24-count">0</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
+        
+        <!-- Кнопка доната Сбера в Футере -->
+        <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" style="text-decoration: none;">
+            <button class="like-btn" style="border-color: #22c55e; color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);">⚡ SUPPORT PROJECT (DONATE)</button>
+        </a>
     </footer>
 
     <script type="module">
@@ -337,7 +338,7 @@
                 const result = await response.json();
                 if (result.success) {
                     if (currentLevelIndex === 23) {
-                        await showVictoryScreen();
+                        showVictoryScreen();
                     } else {
                         triggerSuccess();
                     }
@@ -356,7 +357,6 @@
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
 
-            // Исправление: кнопка трясется только каждые 9 неправильных попыток
             if (wrongAttempts % 9 === 0) {
                 const el = document.getElementById('user-answer').style.display !== 'none' 
                     ? document.getElementById('user-answer') 
@@ -376,18 +376,13 @@
             currentLevelIndex++; loadLevelFromServer();
         }
 
-        async function showVictoryScreen() {
+        function showVictoryScreen() {
             document.getElementById('void-canvas').style.display = 'none';
             document.getElementById('clicker-node').style.display = 'none';
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('victory-screen').classList.add('active');
             generateQR();
-            
             window.updateMyLevelStatus(99); 
-            
-            try {
-                await fetch(`${API_URL}/addCompleted24`, { method: 'POST' });
-            } catch(e) { console.error("Failed to log victory to server", e); }
         }
 
         function setupClicker() {
