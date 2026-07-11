@@ -14,11 +14,14 @@
             --border: #18181b;
             --error: #7f1d1d;
             --success: #15803d;
-            --chat-bg: #08080a;
         }
         * { 
-            box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; 
-            -webkit-user-select: none; user-select: none; /* Запрет выделения синим цветом по всему сайту */
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Courier New', Courier, monospace; 
+            -webkit-user-select: none; 
+            user-select: none; 
         }
         body {
             background-color: var(--bg-color); color: var(--text-main); min-height: 100vh;
@@ -28,24 +31,20 @@
         header { width: 100%; max-width: 700px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
         .stats { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 1px; }
         .stats strong { color: var(--accent); }
-        
         main {
             width: 100%; max-width: 600px; background: var(--card-bg); border: 1px solid var(--border);
             padding: 50px 40px; border-radius: 2px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; position: relative;
-            margin-bottom: 40px; /* Отделяем футер от игровых уровней */
         }
         .screen { display: none; }
         .screen.active { display: block; }
         h1 { font-size: 1.6rem; letter-spacing: 5px; margin-bottom: 30px; color: #fff; position: relative; z-index: 20; }
         p { color: var(--text-main); line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; text-align: justify; position: relative; z-index: 20; }
-        
-        input[type="text"], textarea {
+        input[type="text"] {
             width: 100%; background: var(--bg-color); border: 1px solid var(--border); padding: 15px; color: #fff;
             margin-bottom: 25px; outline: none; text-align: center; letter-spacing: 2px; font-size: 1.1rem;
             transition: all 0.3s ease; -webkit-user-select: text; user-select: text; position: relative; z-index: 20;
         }
-        input[type="text"]:focus, textarea:focus { border-color: var(--accent); background: #09090b; }
-        
+        input[type="text"]:focus { border-color: var(--accent); background: #09090b; }
         .btn-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; position: relative; z-index: 20; }
         .btn {
             background: none; border: 1px solid var(--accent); color: var(--accent); padding: 15px 35px;
@@ -69,95 +68,73 @@
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         
-        /* Модальные окна */
+        /* Модальные окна общие */
         .modal-overlay {
-            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 7, 0.95);
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 7, 0.9);
             z-index: 1000; justify-content: center; align-items: center; opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; visibility: visible; }
-        .modal-card { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; max-width: 450px; width: 90%; text-align: center; position: relative; }
-        .modal-card.success-card { border-color: var(--success); box-shadow: 0 0 30px rgba(21, 128, 61, 0.2); }
-        .modal-card.error-card { border-color: var(--error); box-shadow: 0 0 30px rgba(127, 29, 29, 0.2); }
-        .modal-card h2 { font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
-        .success-card h2 { color: #22c55e; }
-        .error-card h2 { color: #ef4444; }
-        .modal-card p { margin-bottom: 25px; text-align: center; }
+        .modal-card { background: var(--card-bg); border: 1px solid var(--success); padding: 40px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(21, 128, 61, 0.2); }
+        .modal-card h2 { color: #22c55e; font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
+        .modal-card p { margin-bottom: 25px; }
         
         .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .qr-frame img { width: 150px; height: 150px; }
         
-        /* Изолированный футер */
-        footer { width: 100%; max-width: 800px; border-top: 1px solid var(--border); padding-top: 25px; margin-top: auto; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .footer-left { display: flex; flex-direction: column; gap: 5px; }
-        .footer-right { display: flex; gap: 15px; align-items: center; }
-        .copyright { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; }
+        /* Раздел футера */
+        .game-info-container { width: 100%; max-width: 700px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+        footer { width: 100%; max-width: 700px; border-top: 1px solid var(--border); margin-top: 20px; padding-top: 20px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
         
-        /* Переделанная кнопка Likes: круглая, только сердце и счётчик */
-        .like-btn { 
-            background: none; border: 1px solid var(--border); color: var(--text-muted); 
-            width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: all 0.3s; position: relative; gap: 1px;
-        }
-        .like-btn span.heart { font-size: 1rem; line-height: 1; }
-        .like-btn span.count { font-size: 0.6rem; font-weight: bold; }
-        .like-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(188, 152, 85, 0.2); }
+        /* Стили кнопок футера */
+        .round-like-btn { width: 45px; height: 45px; border-radius: 50%; background: none; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; transition: all 0.3s; }
+        .round-like-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .round-like-btn span { font-size: 0.9rem; line-height: 1; }
+        .round-like-btn strong { font-size: 0.65rem; font-weight: normal; }
         
-        /* Переименованная кнопка Donate */
         .donate-btn {
-            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 12px 24px;
-            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 2px; display: inline-block; font-weight: bold;
+            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 1px; display: inline-block;
         }
         .donate-btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
 
-        /* Кнопка открытия чата */
         .chat-toggle-btn {
-            background: none; border: 1px solid var(--border); color: var(--text-main); padding: 12px 24px;
-            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; letter-spacing: 2px; font-weight: bold;
+            background: none; border: 1px solid var(--accent); color: var(--accent); width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;
         }
-        .chat-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .chat-toggle-btn:hover { background: var(--accent); color: var(--bg-color); }
+        .chat-toggle-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-        /* ИНТЕРФЕЙС КАССОВОГО ЧАТА В МОДАЛЬНОМ ОКНЕ */
-        .chat-modal-card {
-            background: var(--card-bg); border: 1px solid var(--border); width: 100%; max-width: 550px; height: 85vh;
-            display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-        }
-        .chat-header {
-            padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
-        }
-        .chat-header h3 { font-size: 1rem; letter-spacing: 2px; color: var(--accent); }
+        /* Модалка ЧАТА */
+        .chat-modal-card { background: var(--card-bg); border: 1px solid var(--accent); width: 95%; max-width: 500px; height: 80vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(188, 152, 85, 0.15); }
+        .chat-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h3 { font-size: 1rem; color: var(--accent); letter-spacing: 2px; }
         .chat-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
-        .chat-close:hover { color: #ef4444; }
+        .chat-close:hover { color: var(--error); }
         
-        .chat-profile-section {
-            padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; background: var(--chat-bg);
-        }
-        .chat-profile-section input { margin-bottom: 0; padding: 8px; font-size: 0.85rem; text-align: left; }
-        .chat-profile-section .btn { padding: 8px 15px; font-size: 0.75rem; letter-spacing: 1px; }
-
-        .chat-messages {
-            flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: var(--chat-bg);
-        }
-        .chat-msg-block {
-            display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 1px dashed #121214; position: relative;
-        }
-        .chat-msg-meta { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; }
+        .chat-nickname-section { padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
+        .chat-nickname-section input { margin-bottom: 0 !important; padding: 8px !important; font-size: 0.9rem !important; text-align: left !important; }
+        .chat-nickname-section .btn { padding: 8px 15px !important; font-size: 0.8rem !important; letter-spacing: 1px !important; }
+        
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; text-align: left; -webkit-user-select: text; user-select: text; }
+        .chat-msg-block { border-left: 2px solid var(--border); padding-left: 10px; position: relative; transition: border-color 0.2s; -webkit-user-select: text; user-select: text; }
+        .chat-msg-block:hover { border-color: var(--accent); }
+        .chat-msg-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; -webkit-user-select: text; user-select: text; }
         .chat-msg-meta strong { color: var(--accent); }
-        .chat-msg-text { 
-            font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap; word-break: break-word; 
-            text-align: left; -webkit-user-select: text; user-select: text; 
-        }
-        .chat-msg-actions { display: flex; gap: 10px; margin-top: 5px; justify-content: flex-end; }
+        .chat-msg-text { font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap; word-break: break-word; line-height: 1.4; -webkit-user-select: text; user-select: text; }
+        
+        .chat-msg-actions { display: flex; gap: 10px; margin-top: 5px; }
         .chat-action-link { font-size: 0.7rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
-        .chat-action-link:hover { color: var(--accent); }
-        .chat-action-link.report-link:hover { color: #ef4444; }
+        .chat-action-link:hover { color: #fff; }
+        .chat-action-link.report-link:hover { color: #f59e0b; }
+        
+        .chat-input-section { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .chat-input-section input { margin-bottom: 0 !important; padding: 12px !important; font-size: 0.95rem !important; text-align: left !important; }
+        .chat-input-section .btn { padding: 12px 20px !important; font-size: 0.85rem !important; letter-spacing: 1px !important; }
 
-        .chat-footer {
-            padding: 15px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center;
-        }
-        .chat-footer input { margin-bottom: 0; font-size: 0.95rem; text-align: left; }
-        .chat-footer .btn { padding: 15px 25px; }
+        /* Диалоговые окна действий чата вместо alert */
+        .chat-dialog-card { max-width: 400px; border-color: var(--border); }
+        .chat-dialog-card h3 { font-size: 1.1rem; color: #fff; margin-bottom: 15px; letter-spacing: 1px; }
 
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
@@ -209,66 +186,95 @@
         </div>
     </main>
 
-    <!-- СИСТЕМНЫЕ КАСКОМНЫЕ МОДАЛЬНЫЕ ОКНА ВМЕСТО ALERT -->
-    <div id="system-modal" class="modal-overlay">
-        <div class="modal-card id-modal-card">
-            <h2 id="sys-modal-title">SYSTEM</h2>
-            <p id="sys-modal-message">...</p>
-            <button class="btn" id="sys-modal-close-btn">OK</button>
-        </div>
-    </div>
-
-    <div id="chat-prompt-modal" class="modal-overlay">
+    <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
-            <h2 id="prompt-modal-title">EDIT</h2>
-            <input type="text" id="prompt-modal-input" placeholder="..." autocomplete="off">
-            <div class="btn-container">
-                <button class="btn" id="prompt-modal-save-btn">SAVE</button>
-                <button class="btn secondary" id="prompt-modal-cancel-btn">CANCEL</button>
-            </div>
+            <h2>ACCESS GRANTED</h2>
+            <p id="modal-message">...</p>
+            <button class="btn" id="modal-continue-btn">CONTINUE</button>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ЧАТА -->
+    <!-- Модалка основного ЧАТА -->
     <div id="chat-modal" class="modal-overlay">
         <div class="chat-modal-card">
             <div class="chat-header">
-                <h3>SECURE_CHAT://NET_ROOM</h3>
-                <button class="chat-close" id="chat-close-btn">✕</button>
+                <h3>MODULE://SECURE_CHAT</h3>
+                <button class="chat-close" id="chat-close-btn">&times;</button>
             </div>
-            <div class="chat-profile-section">
-                <span class="stats" style="color:var(--text-main)">NICK:</span>
-                <input type="text" id="chat-nick-input" placeholder="Anonymous" maxlength="16">
-                <button class="btn" id="chat-save-nick-btn">UPDATE</button>
+            <div class="chat-nickname-section">
+                <input type="text" id="chat-nick-input" placeholder="Change nickname..." maxlength="16" autocomplete="off">
+                <button class="btn" id="chat-nick-save">SAVE</button>
             </div>
-            <div class="chat-messages" id="chat-messages-container">
-                <!-- Сообщения генерируются динамически -->
-            </div>
-            <div class="chat-footer">
-                <input type="text" id="chat-msg-input" placeholder="Type a message... (10s cooldown)" autocomplete="off">
+            <div class="chat-messages" id="chat-messages-container"></div>
+            <div class="chat-input-section">
+                <input type="text" id="chat-msg-input" placeholder="Type a message (3-16 chars)..." autocomplete="off">
                 <button class="btn" id="chat-send-btn">SEND</button>
             </div>
         </div>
     </div>
 
-    <!-- ИЗОЛИРОВАННЫЙ ФУТЕР -->
+    <!-- Модалка для ИЗМЕНЕНИЯ сообщения -->
+    <div id="chat-edit-modal" class="modal-overlay">
+        <div class="modal-card chat-dialog-card">
+            <h3>EDIT MESSAGE</h3>
+            <input type="text" id="chat-edit-input" autocomplete="off">
+            <div class="btn-container">
+                <button class="btn" id="chat-edit-confirm">SAVE</button>
+                <button class="btn secondary" id="chat-edit-cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для УДАЛЕНИЯ сообщения -->
+    <div id="chat-delete-modal" class="modal-overlay">
+        <div class="modal-card chat-dialog-card" style="border-color: var(--error);">
+            <h3 style="color: #ef4444;">DELETE MESSAGE?</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">This action is irreversible.</p>
+            <div class="btn-container">
+                <button class="btn" id="chat-delete-confirm" style="border-color: var(--error); color: var(--error);">DELETE</button>
+                <button class="btn secondary" id="chat-delete-cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для ЖАЛОБЫ -->
+    <div id="chat-report-modal" class="modal-overlay">
+        <div class="modal-card chat-dialog-card" style="border-color: #f59e0b;">
+            <h3 style="color: #f59e0b;">SUBMIT REPORT</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Send information about this message to mod-team?</p>
+            <div class="btn-container">
+                <button class="btn" id="chat-report-confirm" style="border-color: #f59e0b; color: #f59e0b;">SEND</button>
+                <button class="btn secondary" id="chat-report-cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Отделенный блок уровней и инфо-активности от футера -->
+    <div class="game-info-container">
+        <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
+        <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
+        <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
+        
+        <!-- Кнопка лайков: теперь круглая, только сердце и счетчик -->
+        <button id="like-btn" class="round-like-btn"><span>❤</span><strong id="likes-count">0</strong></button>
+        
+        <!-- Переименованная кнопка поддержки -->
+        <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">☕ Donate</a>
+        
+        <!-- Кнопка чата с картинкой из фото (SVG) -->
+        <button id="chat-toggle-btn" class="chat-toggle-btn">
+            <svg viewBox="0 0 512 512"><path d="M448 0H64C28.7 0 0 28.7 0 64v288c0 35.3 28.7 64 64 64h96v84c0 9.8 11.2 15.5 19.1 9.7L304 416h144c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zM176 240c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm112 0c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm112 0c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24z" opacity="0.9"/><path d="M416 160H224c-17.7 0-32 14.3-32 32v160c0 17.7 14.3 32 32 32h160l68.7 51.5c7.9 5.9 19.3.2 19.3-9.6V384c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-128 96c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16zm64 0c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16zm64 0c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z" opacity="0.6"/></svg>
+        </button>
+    </div>
+
+    <!-- Полностью изолированный чистый футер -->
     <footer>
-        <div class="footer-left">
-            <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
-            <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
-            <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
-            <div class="copyright">© 2026 Stanislav A.</div>
-        </div>
-        <div class="footer-right">
-            <button id="chat-open-btn" class="chat-toggle-btn">CHAT</button>
-            <button id="like-btn" class="like-btn"><span class="heart">❤</span><span id="likes-count" class="count">0</span></button>
-            <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">DONATE</a>
-        </div>
+        &copy; 2026 Stanislav A.
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction, child, remove, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
@@ -297,254 +303,15 @@
         let serverLevelData = null;
         let myUserRef = null;
 
-        // Локальное состояние пользователя для чата
-        let userUid = localStorage.getItem('aenigma_uid') || 'usr_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('aenigma_uid', userUid);
-        let userNick = localStorage.getItem('aenigma_nick') || 'Player_' + Math.random().toString(36).substr(2, 4);
-        localStorage.setItem('aenigma_nick', userNick);
+        // Логика ЧАТА (локальные переменные)
+        let myUserId = localStorage.getItem('chat_uid') || 'u_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('chat_uid', myUserId);
+        let myNickname = localStorage.getItem('chat_nick') || 'Guest_' + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('chat-nick-input').value = myNickname;
+
         let lastMessageTime = 0;
+        let activeTargetMsgId = null;
 
-        document.getElementById('chat-nick-input').value = userNick;
-
-        // Кастомные алерты/промпты
-        function showSystemAlert(title, message, isError = false) {
-            const modal = document.getElementById('system-modal');
-            const card = modal.querySelector('.modal-card');
-            document.getElementById('sys-modal-title').textContent = title;
-            document.getElementById('sys-modal-message').textContent = message;
-            card.className = isError ? 'modal-card error-card' : 'modal-card success-card';
-            modal.classList.add('active');
-        }
-        document.getElementById('sys-modal-close-btn').addEventListener('click', () => {
-            document.getElementById('system-modal').classList.remove('active');
-        });
-
-        function showSystemPrompt(title, defaultValue, onSave) {
-            const modal = document.getElementById('chat-prompt-modal');
-            const input = document.getElementById('prompt-modal-input');
-            document.getElementById('prompt-modal-title').textContent = title;
-            input.value = defaultValue;
-            modal.classList.add('active');
-            
-            const saveBtn = document.getElementById('prompt-modal-save-btn');
-            const cancelBtn = document.getElementById('prompt-modal-cancel-btn');
-            
-            const cleanup = () => {
-                modal.classList.remove('active');
-                saveBtn.removeEventListener('click', handleSave);
-                cancelBtn.removeEventListener('click', handleCancel);
-            };
-            const handleSave = () => { onSave(input.value); cleanup(); };
-            const handleCancel = () => { cleanup(); };
-            
-            saveBtn.addEventListener('click', handleSave);
-            cancelBtn.addEventListener('click', handleCancel);
-        }
-
-        // Логика работы чата (Клиентская валидация)
-        function validateText(text) {
-            const clean = text.trim();
-            if (clean.length < 3 || clean.length > 16) return { valid: false, msg: "Length must be 3-16 characters." };
-            
-            // Запрет спецсимволов, рекламы, ссылок, кода, телефонов, адресов, юникод-глифов, свастик
-            const forbiddenSymbols = /[\&\#\₽§¶\^\{\}\[\]\/\\|<>~`_\+\*=]/g;
-            const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|(\.[a-zA-Z]{2,4}\b)/gi;
-            const phoneRegex = /(\+?\d[\s-]?){7,15}/g;
-            const codeRegex = /(<\s*script)|(function\s*\(|eval\(|console\.)/gi;
-            const swastikaRegex = /[\u534D\u5350\u25CC\u203B\u2720]/g; 
-            
-            if (forbiddenSymbols.test(clean)) return { valid: false, msg: "Forbidden special characters detected." };
-            if (linkRegex.test(clean)) return { valid: false, msg: "Links or domains are strictly forbidden." };
-            if (phoneRegex.test(clean) && clean.replace(/\D/g, '').length >= 7) return { valid: false, msg: "Personal data/phone numbers are forbidden." };
-            if (codeRegex.test(clean)) return { valid: false, msg: "Executable code configurations are forbidden." };
-            if (swastikaRegex.test(clean)) return { valid: false, msg: "Prohibited symbolic metadata or political patterns." };
-            
-            return { valid: true, cleanText: clean };
-        }
-
-        // Обновление Ника
-        document.getElementById('chat-save-nick-btn').addEventListener('click', () => {
-            const inputNick = document.getElementById('chat-nick-input').value;
-            const validation = validateText(inputNick);
-            if (!validation.valid) {
-                showSystemAlert("VALIDATION_ERROR", validation.msg, true);
-                return;
-            }
-            userNick = validation.cleanText;
-            localStorage.setItem('aenigma_nick', userNick);
-            showSystemAlert("SUCCESS", "Nickname changed safely.");
-        });
-
-        // Открытие / Закрытие чата
-        document.getElementById('chat-open-btn').addEventListener('click', () => document.getElementById('chat-modal').classList.add('active'));
-        document.getElementById('chat-close-btn').addEventListener('click', () => document.getElementById('chat-modal').classList.remove('active'));
-
-        // Рендеринг и получение сообщений
-        onValue(chatRef, (snapshot) => {
-            const container = document.getElementById('chat-messages-container');
-            container.innerHTML = '';
-            const data = snapshot.val();
-            if (!data) return;
-
-            Object.keys(data).forEach(msgId => {
-                const msg = data[msgId];
-                const block = document.createElement('div');
-                block.className = 'chat-msg-block';
-                
-                // Форматирование: Сверху ник и уровень, двоеточие, на следующей строке сообщение
-                block.innerHTML = `
-                    <div class="chat-msg-meta"><strong>${escapeHtml(msg.nick)}</strong> [LVL: ${msg.level}]:</div>
-                    <div class="chat-msg-text">${escapeHtml(msg.text)}</div>
-                    <div class="chat-msg-actions" id="actions-${msgId}"></div>
-                `;
-
-                const actionsContainer = block.getElementById ? block.getElementById(`actions-${msgId}`) : block.querySelector(`#actions-${msgId}`);
-                
-                // Кнопки Изменить/Удалить только для владельца сообщения
-                if (msg.uid === userUid) {
-                    const editLink = document.createElement('span');
-                    editLink.className = 'chat-action-link';
-                    editLink.textContent = 'Edit';
-                    editLink.addEventListener('click', () => editMessage(msgId, msg.text));
-                    
-                    const delLink = document.createElement('span');
-                    delLink.className = 'chat-action-link';
-                    delLink.textContent = 'Delete';
-                    delLink.addEventListener('click', () => deleteMessage(msgId));
-
-                    actionsContainer.appendChild(editLink);
-                    actionsContainer.appendChild(delLink);
-                } else {
-                    // Кнопка Жалобы для чужих сообщений
-                    const reportLink = document.createElement('span');
-                    reportLink.className = 'chat-action-link report-link';
-                    reportLink.textContent = 'Report';
-                    reportLink.addEventListener('click', () => reportMessage(msgId, msg.nick, msg.text));
-                    actionsContainer.appendChild(reportLink);
-                }
-
-                container.appendChild(block);
-            });
-            container.scrollTop = container.scrollHeight;
-        });
-
-        // Отправка сообщения
-        document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
-        document.getElementById('chat-msg-input').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(); });
-
-        async function sendMessage() {
-            const now = Date.now();
-            if (now - lastMessageTime < 10000) { // 10 секунд ограничение
-                showSystemAlert("RATE_LIMIT", "Please wait 10 seconds between messages.", true);
-                return;
-            }
-
-            const msgInput = document.getElementById('chat-msg-input');
-            const textVal = msgInput.value;
-            const validation = validateText(textVal);
-
-            if (!validation.valid) {
-                showSystemAlert("SECURITY_LOCK", validation.msg, true);
-                return;
-            }
-
-            // Отправка на бэкенд для глубокой строгой фильтрации и модерации
-            try {
-                const response = await fetch(`${API_URL}/moderateMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: validation.cleanText })
-                });
-                const resData = await response.json();
-                
-                if (!resData.success) {
-                    showSystemAlert("MODERATION_BLOCKED", resData.reason, true);
-                    return;
-                }
-
-                // Если сервер одобрил контент, пушим в БД
-                const newMsgRef = push(chatRef);
-                await set(newMsgRef, {
-                    uid: userUid,
-                    nick: userNick,
-                    level: currentLevelIndex + 1,
-                    text: resData.cleanText,
-                    timestamp: serverTimestamp()
-                });
-
-                msgInput.value = '';
-                lastMessageTime = Date.now();
-            } catch (err) {
-                showSystemAlert("SERVER_ERROR", "Unable to sync message with backend gateway.", true);
-            }
-        }
-
-        function editMessage(msgId, currentText) {
-            showSystemPrompt("EDIT MESSAGE", currentText, async (newText) => {
-                const validation = validateText(newText);
-                if (!validation.valid) {
-                    showSystemAlert("SECURITY_LOCK", validation.msg, true);
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`${API_URL}/moderateMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text: validation.cleanText })
-                    });
-                    const resData = await response.json();
-                    
-                    if (!resData.success) {
-                        showSystemAlert("MODERATION_BLOCKED", resData.reason, true);
-                        return;
-                    }
-
-                    await update(ref(db, `secure_chat/${msgId}`), { text: resData.cleanText });
-                    showSystemAlert("SUCCESS", "Message successfully updated.");
-                } catch (e) {
-                    showSystemAlert("ERROR", "Failed to update target payload node.", true);
-                }
-            });
-        }
-
-        async function deleteMessage(msgId) {
-            showSystemPrompt("CONFIRM DELETE", "TYPE 'YES' TO REMOVE", async (confirmText) => {
-                if (confirmText.trim().toUpperCase() === 'YES') {
-                    await remove(ref(db, `secure_chat/${msgId}`));
-                    showSystemAlert("SUCCESS", "Message vanished from registry.");
-                }
-            });
-        }
-
-        // Бесплатная отправка жалобы на почту
-        async function reportMessage(msgId, author, text) {
-            showSystemPrompt("REPORT REASON", "Spam/Insult/Politics", async (reason) => {
-                if(!reason.trim()) return;
-                
-                try {
-                    // Используем бесплатный и надежный шлюз отправки писем formspree.io напрямую с клиента
-                    await fetch('https://formspree.io/f/mnqeogww', { // Резервный эндпоинт отправляет данные сразу на fatago78@gmail.com
-                        method: 'POST',
-                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            email: "fatago78@gmail.com",
-                            _subject: `AENIGMA CHAT REPORT: Message ID ${msgId}`,
-                            message: `Reported Message ID: ${msgId}\nAuthor: ${author}\nContent: ${text}\nReason from Reporter: ${reason}\nTimestamp: ${new Date().toISOString()}`
-                        })
-                    });
-                    showSystemAlert("REPORT FILED", "Thank you. The report was forwarded directly to security ops.");
-                } catch (err) {
-                    showSystemAlert("ERROR", "Failed to route external automated complaint layer.", true);
-                }
-            });
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        // --- ОСТАЛЬНАЯ ЛОГИКА ИГРЫ БЕЗ ИЗМЕНЕНИЙ И ЛИШНИХ ДЕТАЛЕЙ ---
         onValue(likesRef, (snap) => { 
             document.getElementById('likes-count').innerText = snap.val() || 0; 
         });
@@ -593,7 +360,7 @@
 
         onValue(onlineUsersRef, (snap) => {
             try {
-                const data = snap.val();
+                const data = typeof snap.val === 'function' ? snap.val() : snap;
                 let totalOnline = 0, layerOnline = 0;
                 if (data) {
                     const users = Object.values(data);
@@ -642,15 +409,18 @@
                 }
                 document.getElementById('hint-box').classList.remove('visible');
 
+                if (data.type === "DYNAMIC") {
+                    inputField.style.display = 'block'; ctrlBlock.style.display = 'flex'; clickBtn.style.display = 'none';
+                }
                 if (data.type === "CLICKER") {
                     inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block';
                     setupClicker();
-                } else if (data.type === "CANVAS") {
+                }
+                if (data.type === "CANVAS") {
                     inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; canvas.style.display = 'block';
                     canvas.style.pointerEvents = 'auto'; 
                     setupCanvas();
                 }
-
                 if (currentLevelIndex >= 15 && data.type !== "CANVAS") { 
                     canvas.style.display = 'block'; canvas.style.pointerEvents = 'none'; 
                     setupKineticGhost();
@@ -658,17 +428,26 @@
                 if (inputField.style.display !== 'none') inputField.focus();
                 isSubmitting = false;
                 document.getElementById('sub-btn').disabled = false;
-            } catch (err) { isSubmitting = false; }
+            } catch (err) { 
+                isSubmitting = false;
+                document.getElementById('sub-btn').disabled = false;
+            }
         }
 
         async function submitAnswer() {
             if (isSubmitting) return;
             const inputField = document.getElementById('user-answer');
-            if (inputField.style.display === 'none' || inputField.value.trim() === "") return;
+            if (inputField.style.display === 'none') return;
+            if (inputField.value.trim() === "") return;
             
             isSubmitting = true;
             document.getElementById('sub-btn').disabled = true;
-            await sendAnswerToServer(inputField.value, currentLevelIndex === 23 ? { currentAttempts: wrongAttempts } : null);
+
+            if (currentLevelIndex === 23) {
+                await sendAnswerToServer(inputField.value, { currentAttempts: wrongAttempts });
+            } else {
+                await sendAnswerToServer(inputField.value);
+            }
         }
 
         async function sendAnswerToServer(answerString, rawData = null) {
@@ -679,13 +458,15 @@
                     body: JSON.stringify({ index: currentLevelIndex, answer: answerString, rawData: rawData })
                 });
                 const result = await response.json();
-                if (result.success) {
-                    document.getElementById('success-modal').querySelector('#modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
-                    document.getElementById('success-modal').classList.add('active');
-                } else {
-                    triggerFail();
-                }
-            } catch (err) { triggerFail(); }
+                if (result.success) triggerSuccess(); else triggerFail();
+            } catch (err) { 
+                triggerFail();
+            }
+        }
+
+        function triggerSuccess() {
+            document.getElementById('modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
+            document.getElementById('success-modal').classList.add('active');
         }
 
         function triggerFail() {
@@ -700,7 +481,8 @@
 
         function nextLevel() {
             document.getElementById('success-modal').classList.remove('active');
-            currentLevelIndex++; loadLevelFromServer();
+            currentLevelIndex++; 
+            loadLevelFromServer();
         }
 
         async function showVictoryScreen() {
@@ -708,70 +490,329 @@
             document.getElementById('clicker-node').style.display = 'none';
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('victory-screen').classList.add('active');
-            try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}&color=bc9855&bgcolor=0c0c0e`; } catch(e){}
+            generateQR();
             window.updateMyLevelStatus(99); 
-            try { await runTransaction(completed24Ref, (v) => (v || 0) + 1); } catch(e){}
+            try {
+                await runTransaction(completed24Ref, (currentValue) => (currentValue || 0) + 1);
+            } catch(e) {}
         }
 
         function setupClicker() {
-            clickPattern = []; const clickBtn = document.getElementById('clicker-node'); let lastClickTime = 0;
+            clickPattern = [];
+            const clickBtn = document.getElementById('clicker-node');
+            let lastClickTime = 0;
             clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { e.preventDefault(); lastClickTime = Date.now(); };
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
-                e.preventDefault(); const duration = Date.now() - lastClickTime; clickPattern.push(duration);
+                e.preventDefault();
+                const duration = Date.now() - lastClickTime;
+                clickPattern.push(duration);
                 if (clickPattern.length > 9) clickPattern.shift();
-                if (clickPattern.length === 9) { await sendAnswerToServer(null, { timings: clickPattern }); clickPattern = []; }
+                if (clickPattern.length === 9) {
+                    await sendAnswerToServer(null, { timings: clickPattern });
+                    clickPattern = [];
+                }
             };
         }
 
         function setupCanvas() {
-            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d'); let drawing = false;
-            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight;
+            const canvas = document.getElementById('void-canvas');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
             canvas.onmouseup = canvas.ontouchend = async (e) => { 
                 e.preventDefault(); drawing = false; 
                 if (strokePoints.length > 3) await sendAnswerToServer(null, { points: strokePoints, width: canvas.width });
             };
             canvas.onmousemove = canvas.ontouchmove = (e) => {
-                if (!drawing) return; e.preventDefault(); const rect = canvas.getBoundingClientRect();
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX); const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) }; strokePoints.push(pt);
+                if (!drawing) return; e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) };
+                strokePoints.push(pt);
                 ctx.fillStyle = '#bc9855'; ctx.fillRect(pt.x, pt.y, 4, 4);
             };
         }
 
         function setupKineticGhost() {
-            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; 
+            const canvas = document.getElementById('void-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight; 
             const letters = ["V", "O", "R", "T", "E", "X"];
+
             function processFrame() {
                 if (currentLevelIndex < 15) return;
                 ctx.fillStyle = 'rgba(12, 12, 14, 0.2)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
                 const time = performance.now();
+
                 if (currentLevelIndex === 22) {
-                    const currentLetterIdx = Math.floor((time / 3000) % letters.length);
-                    const totalWidth = (50 * 6) + (15 * 5); const startX = (canvas.width - totalWidth) / 2; const startY = (canvas.height - 60) / 2 - 20;
-                    for (let i = 0; i < 6; i++) {
-                        const x = startX + i * 65;
+                    const interval = 3000;
+                    const currentLetterIdx = Math.floor((time / interval) % letters.length);
+                    const totalLetters = letters.length;
+                    const rectWidth = 50, rectHeight = 60, gap = 15;
+                    const totalWidth = (rectWidth * totalLetters) + (gap * (totalLetters - 1));
+                    const startX = (canvas.width - totalWidth) / 2;
+                    const startY = (canvas.height - rectHeight) / 2 - 20;
+
+                    for (let i = 0; i < totalLetters; i++) {
+                        const x = startX + i * (rectWidth + gap);
                         if (i === currentLetterIdx) {
-                            ctx.strokeStyle = '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, 50, 60);
-                            for (let s = 0; s < 40; s++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`; ctx.fillRect(x + Math.random() * 50, startY + Math.random() * 60, 2, 2); }
+                            ctx.strokeStyle = '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                            for (let s = 0; s < 40; s++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`; ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2); }
                             ctx.fillStyle = '#fff'; ctx.font = 'bold 28px "Courier New"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                            ctx.fillText(letters[i], x + 25 + (Math.random() * 4 - 2), startY + 30);
-                        } else { ctx.strokeStyle = '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, 50, 60); }
+                            ctx.fillText(letters[i], x + (rectWidth / 2) + (Math.random() * 4 - 2), startY + (rectHeight / 2));
+                        } else {
+                            ctx.strokeStyle = '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                        }
                     }
                 } else {
-                    for (let i = 0; i < 350; i++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.12})`; ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, Math.random() * 1.5); }
+                    for (let i = 0; i < 350; i++) {
+                        ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.12})`;
+                        ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, Math.random() * 1.5);
+                    }
                 }
                 kineticAnimationFrameId = requestAnimationFrame(processFrame);
             }
             processFrame();
         }
 
+        function getCleanUrl() { return window.location.href.startsWith('file://') ? 'https://google.com' : window.location.href; }
+        function generateQR() { try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=bc9855&bgcolor=0c0c0e`; } catch(e){} }
+        function copyShareLink() {
+            const u = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
+        }
+        function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
+        
+        function resetGame() { 
+            currentLevelIndex = 0; wrongAttempts = 0; isSubmitting = false; 
+            document.getElementById('sub-btn').disabled = false;
+            document.getElementById('victory-screen').classList.remove('active'); 
+            document.getElementById('start-screen').classList.add('active'); 
+            window.updateMyLevelStatus(-1);
+        }
+
+        // --- ИНТЕГРАЦИЯ СЕКЬЮРНОГО ЧАТА НА КЛИЕНТЕ ---
+        const openChatBtn = document.getElementById('chat-toggle-btn');
+        const chatModal = document.getElementById('chat-modal');
+        const closeChatBtn = document.getElementById('chat-close-btn');
+        const chatMsgInput = document.getElementById('chat-msg-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const chatMessagesContainer = document.getElementById('chat-messages-container');
+        const nickInput = document.getElementById('chat-nick-input');
+        const nickSaveBtn = document.getElementById('chat-nick-save');
+
+        // Модалки вместо alert
+        const editModal = document.getElementById('chat-edit-modal');
+        const deleteModal = document.getElementById('chat-delete-modal');
+        const reportModal = document.getElementById('chat-report-modal');
+
+        openChatBtn.addEventListener('click', () => chatModal.classList.add('active'));
+        closeChatBtn.addEventListener('click', () => chatModal.classList.remove('active'));
+
+        // Валидация никнейма и спецсимволов/юникода/свастик на клиенте
+        function validateText(text) {
+            if (/[\u534d\u5350\u252c\u2534\u2550\u2551\u2554\u2557\u255a\u255d]/g.test(text)) return false; // Свастики и псевдографика Юникода
+            const allowedRegex = /^[a-zA-Z0-9а-яА-ЯёЁ\s!?.,\-\(\):;]+$/;
+            return allowedRegex.test(text);
+        }
+
+        nickSaveBtn.addEventListener('click', () => {
+            const val = nickInput.value.trim();
+            if(val.length >= 3 && val.length <= 16 && validateText(val)) {
+                myNickname = val;
+                localStorage.setItem('chat_nick', myNickname);
+                nickInput.style.borderColor = 'var(--border)';
+            } else {
+                nickInput.classList.add('shake');
+                setTimeout(() => nickInput.classList.remove('shake'), 400);
+            }
+        });
+
+        // Отправка сообщения
+        async function postChatMessage() {
+            const now = Date.now();
+            if (now - lastMessageTime < 10000) { // Ограничение в 10 секунд
+                chatMsgInput.classList.add('shake');
+                setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
+                return;
+            }
+
+            const msgText = chatMsgInput.value.trim();
+            if (msgText.length < 3 || msgText.length > 16 || !validateText(msgText)) {
+                chatMsgInput.classList.add('shake');
+                setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
+                return;
+            }
+
+            // Отправляем на сервер для строгой интернациональной модерации
+            try {
+                const res = await fetch(`${API_URL}/validateChatMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msgText })
+                });
+                const data = await res.json();
+                if (!data.valid) {
+                    chatMsgInput.classList.add('shake');
+                    setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
+                    return;
+                }
+
+                // Если сервер одобрил — пушим в Firebase Realtime DB
+                const newMsgRef = push(chatRef);
+                await set(newMsgRef, {
+                    id: newMsgRef.key,
+                    uid: myUserId,
+                    nickname: myNickname,
+                    level: (currentLevelIndex + 1),
+                    text: msgText,
+                    timestamp: now
+                });
+                chatMsgInput.value = '';
+                lastMessageTime = now;
+            } catch (e) {
+                chatMsgInput.classList.add('shake');
+                setTimeout(() => chatMsgInput.classList.remove('shake'), 400);
+            }
+        }
+
+        chatSendBtn.addEventListener('click', postChatMessage);
+        chatMsgInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') postChatMessage(); });
+
+        // Рендеринг чата в реальном времени
+        onValue(chatRef, (snapshot) => {
+            chatMessagesContainer.innerHTML = '';
+            const data = snapshot.val();
+            if (!data) return;
+            
+            const sortedMessages = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+            
+            // Ограничим видимость последними 50 сообщениями
+            const displayMsgs = sortedMessages.slice(-50);
+
+            displayMsgs.forEach(msg => {
+                const block = document.createElement('div');
+                block.className = 'chat-msg-block';
+                
+                // Формат: Сверху ник и уровень потом двоеточие и на следующей строке сообщение
+                block.innerHTML = `
+                    <div class="chat-msg-meta"><strong>${msg.nickname}</strong> [LVL ${msg.level}]:</div>
+                    <div class="chat-msg-text">${msg.text}</div>
+                `;
+
+                const actionsContainer = document.createElement('div');
+                actionsContainer.className = 'chat-msg-actions';
+
+                if (msg.uid === myUserId) {
+                    // Изменить
+                    const editLink = document.createElement('span');
+                    editLink.className = 'chat-action-link';
+                    editLink.innerText = 'Edit';
+                    editLink.onclick = () => openEditDialog(msg.id, msg.text);
+                    
+                    // Удалить
+                    const deleteLink = document.createElement('span');
+                    deleteLink.className = 'chat-action-link';
+                    deleteLink.innerText = 'Delete';
+                    deleteLink.onclick = () => openDeleteDialog(msg.id);
+
+                    actionsContainer.appendChild(editLink);
+                    actionsContainer.appendChild(deleteLink);
+                } else {
+                    // Жалоба
+                    const reportLink = document.createElement('span');
+                    reportLink.className = 'chat-action-link report-link';
+                    reportLink.innerText = 'Report';
+                    reportLink.onclick = () => openReportDialog(msg.id, msg.nickname, msg.text);
+                    actionsContainer.appendChild(reportLink);
+                }
+
+                block.appendChild(actionsContainer);
+                chatMessagesContainer.appendChild(block);
+            });
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        });
+
+        // Кастомные диалоговые окна действий
+        function openEditDialog(id, currentText) {
+            activeTargetMsgId = id;
+            document.getElementById('chat-edit-input').value = currentText;
+            editModal.classList.add('active');
+        }
+        document.getElementById('chat-edit-cancel').onclick = () => editModal.classList.remove('active');
+        document.getElementById('chat-edit-confirm').onclick = async () => {
+            const input = document.getElementById('chat-edit-input');
+            const newText = input.value.trim();
+            if (newText.length >= 3 && newText.length <= 16 && validateText(newText)) {
+                try {
+                    const res = await fetch(`${API_URL}/validateChatMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: newText })
+                    });
+                    const data = await res.json();
+                    if (data.valid) {
+                        await update(child(chatRef, activeTargetMsgId), { text: newText });
+                        editModal.classList.remove('active');
+                    } else {
+                        input.classList.add('shake'); setTimeout(() => input.classList.remove('shake'), 400);
+                    }
+                } catch(e) {}
+            } else {
+                input.classList.add('shake'); setTimeout(() => input.classList.remove('shake'), 400);
+            }
+        };
+
+        function openDeleteDialog(id) {
+            activeTargetMsgId = id;
+            deleteModal.classList.add('active');
+        }
+        document.getElementById('chat-delete-cancel').onclick = () => deleteModal.classList.remove('active');
+        document.getElementById('chat-delete-confirm').onclick = async () => {
+            try {
+                await remove(child(chatRef, activeTargetMsgId));
+                deleteModal.classList.remove('active');
+            } catch(e) {}
+        };
+
+        let reportData = null;
+        function openReportDialog(id, user, text) {
+            reportData = { id, user, text };
+            reportModal.classList.add('active');
+        }
+        document.getElementById('chat-report-cancel').onclick = () => reportModal.classList.remove('active');
+        document.getElementById('chat-report-confirm').onclick = async () => {
+            if(!reportData) return;
+            // Бесплатная отправка через Formspree / EmailJS или публичный REST API без участия вашего сервера
+            try {
+                await fetch('https://formspree.io/f/mnnyeajw', { // Резервный эндпоинт отправки на fatago78@gmail.com
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        email: "fatago78@gmail.com",
+                        message: `REPORT INCIDENT:\nMsg ID: ${reportData.id}\nUser: ${reportData.user}\nContent: ${reportData.text}`
+                    })
+                });
+            } catch(e) {}
+            reportModal.classList.remove('active');
+        };
+
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
         document.getElementById('modal-continue-btn').addEventListener('click', nextLevel);
-        document.getElementById('restart-btn').addEventListener('click', () => { currentLevelIndex = 0; window.startGame(); document.getElementById('victory-screen').classList.remove('active'); });
-        document.getElementById('share-btn').addEventListener('click', () => { navigator.clipboard.writeText(window.location.href); showSystemAlert("SHARED", "Link copied to clipboard!"); });
-        document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') await submitAnswer(); });
+        document.getElementById('restart-btn').addEventListener('click', resetGame);
+        document.getElementById('share-btn').addEventListener('click', copyShareLink);
+        document.getElementById('user-answer').addEventListener('keydown', async (e) => { 
+            if (e.key === 'Enter') { 
+                if (document.getElementById('success-modal').classList.contains('active')) nextLevel(); 
+                else await submitAnswer(); 
+            } 
+        });
     </script>
 </body>
 </html>
