@@ -382,6 +382,7 @@
                 
                 if (clickPattern.length === 9) {
                     await sendAnswerToServer(null, { timings: clickPattern });
+                    clickPattern = [];
                 }
             };
         }
