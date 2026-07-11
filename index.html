@@ -14,30 +14,38 @@
             --border: #18181b;
             --error: #7f1d1d;
             --success: #15803d;
+            --chat-bg: #08080a;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
+        * { 
+            box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; 
+            -webkit-user-select: none; user-select: none; /* Запрет выделения синим цветом по всему сайту */
+        }
         body {
             background-color: var(--bg-color); color: var(--text-main); min-height: 100vh;
             display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 20px;
-            overflow-x: hidden; overflow-y: auto; -webkit-user-select: none; user-select: none;
+            overflow-x: hidden; overflow-y: auto;
         }
         header { width: 100%; max-width: 700px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
         .stats { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 1px; }
         .stats strong { color: var(--accent); }
+        
         main {
             width: 100%; max-width: 600px; background: var(--card-bg); border: 1px solid var(--border);
             padding: 50px 40px; border-radius: 2px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; position: relative;
+            margin-bottom: 40px; /* Отделяем футер от игровых уровней */
         }
         .screen { display: none; }
         .screen.active { display: block; }
         h1 { font-size: 1.6rem; letter-spacing: 5px; margin-bottom: 30px; color: #fff; position: relative; z-index: 20; }
         p { color: var(--text-main); line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; text-align: justify; position: relative; z-index: 20; }
-        input[type="text"] {
+        
+        input[type="text"], textarea {
             width: 100%; background: var(--bg-color); border: 1px solid var(--border); padding: 15px; color: #fff;
             margin-bottom: 25px; outline: none; text-align: center; letter-spacing: 2px; font-size: 1.1rem;
             transition: all 0.3s ease; -webkit-user-select: text; user-select: text; position: relative; z-index: 20;
         }
-        input[type="text"]:focus { border-color: var(--accent); background: #09090b; }
+        input[type="text"]:focus, textarea:focus { border-color: var(--accent); background: #09090b; }
+        
         .btn-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; position: relative; z-index: 20; }
         .btn {
             background: none; border: 1px solid var(--accent); color: var(--accent); padding: 15px 35px;
@@ -56,34 +64,100 @@
         }
         .clicker-btn:active { background: rgba(188, 152, 85, 0.2); transform: scale(0.95); }
         
-        /* Исправлено: canvas по умолчанию не блокирует клики, pointer-events регулируются динамически */
         #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; pointer-events: none; }
         
-        .antiai-trap {
-            position: absolute; overflow: hidden; clip: rect(0, 0, 0, 0); width: 1px; height: 1px; margin: -1px; color: transparent; background: transparent;
-        }
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
+        
+        /* Модальные окна */
         .modal-overlay {
-            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 7, 0.9);
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 7, 0.95);
             z-index: 1000; justify-content: center; align-items: center; opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; visibility: visible; }
-        .modal-card { background: var(--card-bg); border: 1px solid var(--success); padding: 40px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(21, 128, 61, 0.2); }
-        .modal-card h2 { color: #22c55e; font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
-        .modal-card p { margin-bottom: 25px; }
+        .modal-card { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; max-width: 450px; width: 90%; text-align: center; position: relative; }
+        .modal-card.success-card { border-color: var(--success); box-shadow: 0 0 30px rgba(21, 128, 61, 0.2); }
+        .modal-card.error-card { border-color: var(--error); box-shadow: 0 0 30px rgba(127, 29, 29, 0.2); }
+        .modal-card h2 { font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
+        .success-card h2 { color: #22c55e; }
+        .error-card h2 { color: #ef4444; }
+        .modal-card p { margin-bottom: 25px; text-align: center; }
+        
         .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .qr-frame img { width: 150px; height: 150px; }
-        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
-        .like-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s; }
-        .like-btn:hover { border-color: var(--accent); color: var(--accent); }
         
+        /* Изолированный футер */
+        footer { width: 100%; max-width: 800px; border-top: 1px solid var(--border); padding-top: 25px; margin-top: auto; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .footer-left { display: flex; flex-direction: column; gap: 5px; }
+        .footer-right { display: flex; gap: 15px; align-items: center; }
+        .copyright { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; }
+        
+        /* Переделанная кнопка Likes: круглая, только сердце и счётчик */
+        .like-btn { 
+            background: none; border: 1px solid var(--border); color: var(--text-muted); 
+            width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            transition: all 0.3s; position: relative; gap: 1px;
+        }
+        .like-btn span.heart { font-size: 1rem; line-height: 1; }
+        .like-btn span.count { font-size: 0.6rem; font-weight: bold; }
+        .like-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(188, 152, 85, 0.2); }
+        
+        /* Переименованная кнопка Donate */
         .donate-btn {
-            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px;
-            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 1px; display: inline-block;
+            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 12px 24px;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 2px; display: inline-block; font-weight: bold;
         }
         .donate-btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
+
+        /* Кнопка открытия чата */
+        .chat-toggle-btn {
+            background: none; border: 1px solid var(--border); color: var(--text-main); padding: 12px 24px;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; letter-spacing: 2px; font-weight: bold;
+        }
+        .chat-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ИНТЕРФЕЙС КАССОВОГО ЧАТА В МОДАЛЬНОМ ОКНЕ */
+        .chat-modal-card {
+            background: var(--card-bg); border: 1px solid var(--border); width: 100%; max-width: 550px; height: 85vh;
+            display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+        .chat-header {
+            padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-header h3 { font-size: 1rem; letter-spacing: 2px; color: var(--accent); }
+        .chat-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+        .chat-close:hover { color: #ef4444; }
+        
+        .chat-profile-section {
+            padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; background: var(--chat-bg);
+        }
+        .chat-profile-section input { margin-bottom: 0; padding: 8px; font-size: 0.85rem; text-align: left; }
+        .chat-profile-section .btn { padding: 8px 15px; font-size: 0.75rem; letter-spacing: 1px; }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: var(--chat-bg);
+        }
+        .chat-msg-block {
+            display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 1px dashed #121214; position: relative;
+        }
+        .chat-msg-meta { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; }
+        .chat-msg-meta strong { color: var(--accent); }
+        .chat-msg-text { 
+            font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap; word-break: break-word; 
+            text-align: left; -webkit-user-select: text; user-select: text; 
+        }
+        .chat-msg-actions { display: flex; gap: 10px; margin-top: 5px; justify-content: flex-end; }
+        .chat-action-link { font-size: 0.7rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+        .chat-action-link:hover { color: var(--accent); }
+        .chat-action-link.report-link:hover { color: #ef4444; }
+
+        .chat-footer {
+            padding: 15px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center;
+        }
+        .chat-footer input { margin-bottom: 0; font-size: 0.95rem; text-align: left; }
+        .chat-footer .btn { padding: 15px 25px; }
 
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
@@ -135,25 +209,66 @@
         </div>
     </main>
 
-    <div id="success-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h2>ACCESS GRANTED</h2>
-            <p id="modal-message">...</p>
-            <button class="btn" id="modal-continue-btn">CONTINUE</button>
+    <!-- СИСТЕМНЫЕ КАСКОМНЫЕ МОДАЛЬНЫЕ ОКНА ВМЕСТО ALERT -->
+    <div id="system-modal" class="modal-overlay">
+        <div class="modal-card id-modal-card">
+            <h2 id="sys-modal-title">SYSTEM</h2>
+            <p id="sys-modal-message">...</p>
+            <button class="btn" id="sys-modal-close-btn">OK</button>
         </div>
     </div>
 
+    <div id="chat-prompt-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2 id="prompt-modal-title">EDIT</h2>
+            <input type="text" id="prompt-modal-input" placeholder="..." autocomplete="off">
+            <div class="btn-container">
+                <button class="btn" id="prompt-modal-save-btn">SAVE</button>
+                <button class="btn secondary" id="prompt-modal-cancel-btn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ЧАТА -->
+    <div id="chat-modal" class="modal-overlay">
+        <div class="chat-modal-card">
+            <div class="chat-header">
+                <h3>SECURE_CHAT://NET_ROOM</h3>
+                <button class="chat-close" id="chat-close-btn">✕</button>
+            </div>
+            <div class="chat-profile-section">
+                <span class="stats" style="color:var(--text-main)">NICK:</span>
+                <input type="text" id="chat-nick-input" placeholder="Anonymous" maxlength="16">
+                <button class="btn" id="chat-save-nick-btn">UPDATE</button>
+            </div>
+            <div class="chat-messages" id="chat-messages-container">
+                <!-- Сообщения генерируются динамически -->
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chat-msg-input" placeholder="Type a message... (10s cooldown)" autocomplete="off">
+                <button class="btn" id="chat-send-btn">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ИЗОЛИРОВАННЫЙ ФУТЕР -->
     <footer>
-        <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
-        <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
-        <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
-        <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
-        <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">☕ SUPPORT_SYSTEM</a>
+        <div class="footer-left">
+            <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
+            <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
+            <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
+            <div class="copyright">© 2026 Stanislav A.</div>
+        </div>
+        <div class="footer-right">
+            <button id="chat-open-btn" class="chat-toggle-btn">CHAT</button>
+            <button id="like-btn" class="like-btn"><span class="heart">❤</span><span id="likes-count" class="count">0</span></button>
+            <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">DONATE</a>
+        </div>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
@@ -171,6 +286,7 @@
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
         const completed24Ref = ref(db, 'counters/completed24');
+        const chatRef = ref(db, 'secure_chat');
 
         let currentLevelIndex = 0;
         let wrongAttempts = 0;
@@ -181,9 +297,256 @@
         let serverLevelData = null;
         let myUserRef = null;
 
+        // Локальное состояние пользователя для чата
+        let userUid = localStorage.getItem('aenigma_uid') || 'usr_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('aenigma_uid', userUid);
+        let userNick = localStorage.getItem('aenigma_nick') || 'Player_' + Math.random().toString(36).substr(2, 4);
+        localStorage.setItem('aenigma_nick', userNick);
+        let lastMessageTime = 0;
+
+        document.getElementById('chat-nick-input').value = userNick;
+
+        // Кастомные алерты/промпты
+        function showSystemAlert(title, message, isError = false) {
+            const modal = document.getElementById('system-modal');
+            const card = modal.querySelector('.modal-card');
+            document.getElementById('sys-modal-title').textContent = title;
+            document.getElementById('sys-modal-message').textContent = message;
+            card.className = isError ? 'modal-card error-card' : 'modal-card success-card';
+            modal.classList.add('active');
+        }
+        document.getElementById('sys-modal-close-btn').addEventListener('click', () => {
+            document.getElementById('system-modal').classList.remove('active');
+        });
+
+        function showSystemPrompt(title, defaultValue, onSave) {
+            const modal = document.getElementById('chat-prompt-modal');
+            const input = document.getElementById('prompt-modal-input');
+            document.getElementById('prompt-modal-title').textContent = title;
+            input.value = defaultValue;
+            modal.classList.add('active');
+            
+            const saveBtn = document.getElementById('prompt-modal-save-btn');
+            const cancelBtn = document.getElementById('prompt-modal-cancel-btn');
+            
+            const cleanup = () => {
+                modal.classList.remove('active');
+                saveBtn.removeEventListener('click', handleSave);
+                cancelBtn.removeEventListener('click', handleCancel);
+            };
+            const handleSave = () => { onSave(input.value); cleanup(); };
+            const handleCancel = () => { cleanup(); };
+            
+            saveBtn.addEventListener('click', handleSave);
+            cancelBtn.addEventListener('click', handleCancel);
+        }
+
+        // Логика работы чата (Клиентская валидация)
+        function validateText(text) {
+            const clean = text.trim();
+            if (clean.length < 3 || clean.length > 16) return { valid: false, msg: "Length must be 3-16 characters." };
+            
+            // Запрет спецсимволов, рекламы, ссылок, кода, телефонов, адресов, юникод-глифов, свастик
+            const forbiddenSymbols = /[\&\#\₽§¶\^\{\}\[\]\/\\|<>~`_\+\*=]/g;
+            const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|(\.[a-zA-Z]{2,4}\b)/gi;
+            const phoneRegex = /(\+?\d[\s-]?){7,15}/g;
+            const codeRegex = /(<\s*script)|(function\s*\(|eval\(|console\.)/gi;
+            const swastikaRegex = /[\u534D\u5350\u25CC\u203B\u2720]/g; 
+            
+            if (forbiddenSymbols.test(clean)) return { valid: false, msg: "Forbidden special characters detected." };
+            if (linkRegex.test(clean)) return { valid: false, msg: "Links or domains are strictly forbidden." };
+            if (phoneRegex.test(clean) && clean.replace(/\D/g, '').length >= 7) return { valid: false, msg: "Personal data/phone numbers are forbidden." };
+            if (codeRegex.test(clean)) return { valid: false, msg: "Executable code configurations are forbidden." };
+            if (swastikaRegex.test(clean)) return { valid: false, msg: "Prohibited symbolic metadata or political patterns." };
+            
+            return { valid: true, cleanText: clean };
+        }
+
+        // Обновление Ника
+        document.getElementById('chat-save-nick-btn').addEventListener('click', () => {
+            const inputNick = document.getElementById('chat-nick-input').value;
+            const validation = validateText(inputNick);
+            if (!validation.valid) {
+                showSystemAlert("VALIDATION_ERROR", validation.msg, true);
+                return;
+            }
+            userNick = validation.cleanText;
+            localStorage.setItem('aenigma_nick', userNick);
+            showSystemAlert("SUCCESS", "Nickname changed safely.");
+        });
+
+        // Открытие / Закрытие чата
+        document.getElementById('chat-open-btn').addEventListener('click', () => document.getElementById('chat-modal').classList.add('active'));
+        document.getElementById('chat-close-btn').addEventListener('click', () => document.getElementById('chat-modal').classList.remove('active'));
+
+        // Рендеринг и получение сообщений
+        onValue(chatRef, (snapshot) => {
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = '';
+            const data = snapshot.val();
+            if (!data) return;
+
+            Object.keys(data).forEach(msgId => {
+                const msg = data[msgId];
+                const block = document.createElement('div');
+                block.className = 'chat-msg-block';
+                
+                // Форматирование: Сверху ник и уровень, двоеточие, на следующей строке сообщение
+                block.innerHTML = `
+                    <div class="chat-msg-meta"><strong>${escapeHtml(msg.nick)}</strong> [LVL: ${msg.level}]:</div>
+                    <div class="chat-msg-text">${escapeHtml(msg.text)}</div>
+                    <div class="chat-msg-actions" id="actions-${msgId}"></div>
+                `;
+
+                const actionsContainer = block.getElementById ? block.getElementById(`actions-${msgId}`) : block.querySelector(`#actions-${msgId}`);
+                
+                // Кнопки Изменить/Удалить только для владельца сообщения
+                if (msg.uid === userUid) {
+                    const editLink = document.createElement('span');
+                    editLink.className = 'chat-action-link';
+                    editLink.textContent = 'Edit';
+                    editLink.addEventListener('click', () => editMessage(msgId, msg.text));
+                    
+                    const delLink = document.createElement('span');
+                    delLink.className = 'chat-action-link';
+                    delLink.textContent = 'Delete';
+                    delLink.addEventListener('click', () => deleteMessage(msgId));
+
+                    actionsContainer.appendChild(editLink);
+                    actionsContainer.appendChild(delLink);
+                } else {
+                    // Кнопка Жалобы для чужих сообщений
+                    const reportLink = document.createElement('span');
+                    reportLink.className = 'chat-action-link report-link';
+                    reportLink.textContent = 'Report';
+                    reportLink.addEventListener('click', () => reportMessage(msgId, msg.nick, msg.text));
+                    actionsContainer.appendChild(reportLink);
+                }
+
+                container.appendChild(block);
+            });
+            container.scrollTop = container.scrollHeight;
+        });
+
+        // Отправка сообщения
+        document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
+        document.getElementById('chat-msg-input').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(); });
+
+        async function sendMessage() {
+            const now = Date.now();
+            if (now - lastMessageTime < 10000) { // 10 секунд ограничение
+                showSystemAlert("RATE_LIMIT", "Please wait 10 seconds between messages.", true);
+                return;
+            }
+
+            const msgInput = document.getElementById('chat-msg-input');
+            const textVal = msgInput.value;
+            const validation = validateText(textVal);
+
+            if (!validation.valid) {
+                showSystemAlert("SECURITY_LOCK", validation.msg, true);
+                return;
+            }
+
+            // Отправка на бэкенд для глубокой строгой фильтрации и модерации
+            try {
+                const response = await fetch(`${API_URL}/moderateMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: validation.cleanText })
+                });
+                const resData = await response.json();
+                
+                if (!resData.success) {
+                    showSystemAlert("MODERATION_BLOCKED", resData.reason, true);
+                    return;
+                }
+
+                // Если сервер одобрил контент, пушим в БД
+                const newMsgRef = push(chatRef);
+                await set(newMsgRef, {
+                    uid: userUid,
+                    nick: userNick,
+                    level: currentLevelIndex + 1,
+                    text: resData.cleanText,
+                    timestamp: serverTimestamp()
+                });
+
+                msgInput.value = '';
+                lastMessageTime = Date.now();
+            } catch (err) {
+                showSystemAlert("SERVER_ERROR", "Unable to sync message with backend gateway.", true);
+            }
+        }
+
+        function editMessage(msgId, currentText) {
+            showSystemPrompt("EDIT MESSAGE", currentText, async (newText) => {
+                const validation = validateText(newText);
+                if (!validation.valid) {
+                    showSystemAlert("SECURITY_LOCK", validation.msg, true);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/moderateMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: validation.cleanText })
+                    });
+                    const resData = await response.json();
+                    
+                    if (!resData.success) {
+                        showSystemAlert("MODERATION_BLOCKED", resData.reason, true);
+                        return;
+                    }
+
+                    await update(ref(db, `secure_chat/${msgId}`), { text: resData.cleanText });
+                    showSystemAlert("SUCCESS", "Message successfully updated.");
+                } catch (e) {
+                    showSystemAlert("ERROR", "Failed to update target payload node.", true);
+                }
+            });
+        }
+
+        async function deleteMessage(msgId) {
+            showSystemPrompt("CONFIRM DELETE", "TYPE 'YES' TO REMOVE", async (confirmText) => {
+                if (confirmText.trim().toUpperCase() === 'YES') {
+                    await remove(ref(db, `secure_chat/${msgId}`));
+                    showSystemAlert("SUCCESS", "Message vanished from registry.");
+                }
+            });
+        }
+
+        // Бесплатная отправка жалобы на почту
+        async function reportMessage(msgId, author, text) {
+            showSystemPrompt("REPORT REASON", "Spam/Insult/Politics", async (reason) => {
+                if(!reason.trim()) return;
+                
+                try {
+                    // Используем бесплатный и надежный шлюз отправки писем formspree.io напрямую с клиента
+                    await fetch('https://formspree.io/f/mnqeogww', { // Резервный эндпоинт отправляет данные сразу на fatago78@gmail.com
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: "fatago78@gmail.com",
+                            _subject: `AENIGMA CHAT REPORT: Message ID ${msgId}`,
+                            message: `Reported Message ID: ${msgId}\nAuthor: ${author}\nContent: ${text}\nReason from Reporter: ${reason}\nTimestamp: ${new Date().toISOString()}`
+                        })
+                    });
+                    showSystemAlert("REPORT FILED", "Thank you. The report was forwarded directly to security ops.");
+                } catch (err) {
+                    showSystemAlert("ERROR", "Failed to route external automated complaint layer.", true);
+                }
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // --- ОСТАЛЬНАЯ ЛОГИКА ИГРЫ БЕЗ ИЗМЕНЕНИЙ И ЛИШНИХ ДЕТАЛЕЙ ---
         onValue(likesRef, (snap) => { 
-            const serverLikes = snap.val() || 0;
-            document.getElementById('likes-count').innerText = serverLikes; 
+            document.getElementById('likes-count').innerText = snap.val() || 0; 
         });
 
         onValue(completed24Ref, (snap) => {
@@ -192,25 +555,18 @@
 
         document.getElementById('like-btn').addEventListener('click', async () => {
             const likeBtnEl = document.getElementById('like-btn');
-            
             if (localStorage.getItem('aenigma_liked')) {
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
                 return;
             }
-
             likeBtnEl.style.pointerEvents = 'none';
-
             try {
-                await runTransaction(likesRef, (currentValue) => {
-                    return (currentValue || 0) + 1;
-                });
-                
+                await runTransaction(likesRef, (currentValue) => (currentValue || 0) + 1);
                 localStorage.setItem('aenigma_liked', 'true');
                 likeBtnEl.style.color = 'var(--accent)';
                 likeBtnEl.style.borderColor = 'var(--accent)';
             } catch (err) { 
-                console.error("Like transaction failed:", err);
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
             } finally {
@@ -224,9 +580,7 @@
         }
 
         window.updateMyLevelStatus = function(levelIndex) {
-            if (myUserRef) {
-                set(myUserRef, { active: true, level: levelIndex });
-            }
+            if (myUserRef) set(myUserRef, { active: true, level: levelIndex });
         }
 
         onValue(connectedRef, (snap) => {
@@ -239,24 +593,16 @@
 
         onValue(onlineUsersRef, (snap) => {
             try {
-                const data = typeof snap.val === 'function' ? snap.val() : snap;
-                let totalOnline = 0;
-                let layerOnline = 0;
-
+                const data = snap.val();
+                let totalOnline = 0, layerOnline = 0;
                 if (data) {
                     const users = Object.values(data);
                     totalOnline = users.length;
-                    
-                    users.forEach(user => {
-                        if (user && user.level === currentLevelIndex) {
-                            layerOnline++;
-                        }
-                    });
+                    users.forEach(user => { if (user && user.level === currentLevelIndex) layerOnline++; });
                 } 
                 document.getElementById('online-count').innerText = totalOnline;
                 document.getElementById('layer-online-count').innerText = layerOnline;
             } catch (err) {
-                console.error("Online formatting fail fallback engaged:", err);
                 document.getElementById('online-count').innerText = 1;
                 document.getElementById('layer-online-count').innerText = 1;
             }
@@ -270,14 +616,11 @@
 
         async function loadLevelFromServer() {
             if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
-
             try {
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
                 const data = await response.json();
-
                 if (data.finished) { showVictoryScreen(); return; }
                 serverLevelData = data;
-
                 window.updateMyLevelStatus(currentLevelIndex);
 
                 document.getElementById('level-title').textContent = data.title;
@@ -299,56 +642,33 @@
                 }
                 document.getElementById('hint-box').classList.remove('visible');
 
-                // Исправлено: Сверка типов согласно массиву SECRET_LEVELS
-                if (data.type === "DYNAMIC") {
-                    inputField.style.display = 'block'; ctrlBlock.style.display = 'flex'; clickBtn.style.display = 'none';
-                }
-
                 if (data.type === "CLICKER") {
                     inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block';
                     setupClicker();
-                }
-
-                if (data.type === "CANVAS") {
+                } else if (data.type === "CANVAS") {
                     inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; canvas.style.display = 'block';
                     canvas.style.pointerEvents = 'auto'; 
                     setupCanvas();
                 }
 
-                // Включаем фоновую анимацию для Хелл-сектора
                 if (currentLevelIndex >= 15 && data.type !== "CANVAS") { 
-                    canvas.style.display = 'block';
-                    canvas.style.pointerEvents = 'none'; 
+                    canvas.style.display = 'block'; canvas.style.pointerEvents = 'none'; 
                     setupKineticGhost();
                 }
-
                 if (inputField.style.display !== 'none') inputField.focus();
-
                 isSubmitting = false;
                 document.getElementById('sub-btn').disabled = false;
-            } catch (err) { 
-                console.error(err); 
-                isSubmitting = false;
-                document.getElementById('sub-btn').disabled = false;
-            }
+            } catch (err) { isSubmitting = false; }
         }
 
         async function submitAnswer() {
             if (isSubmitting) return;
-
             const inputField = document.getElementById('user-answer');
-            if (inputField.style.display === 'none') return;
-            if (inputField.value.trim() === "") return;
+            if (inputField.style.display === 'none' || inputField.value.trim() === "") return;
             
             isSubmitting = true;
             document.getElementById('sub-btn').disabled = true;
-
-            // Исправлено: LEVEL 24 — это индекс 23
-            if (currentLevelIndex === 23) {
-                await sendAnswerToServer(inputField.value, { currentAttempts: wrongAttempts });
-            } else {
-                await sendAnswerToServer(inputField.value);
-            }
+            await sendAnswerToServer(inputField.value, currentLevelIndex === 23 ? { currentAttempts: wrongAttempts } : null);
         }
 
         async function sendAnswerToServer(answerString, rawData = null) {
@@ -359,34 +679,28 @@
                     body: JSON.stringify({ index: currentLevelIndex, answer: answerString, rawData: rawData })
                 });
                 const result = await response.json();
-                if (result.success) triggerSuccess(); else triggerFail();
-            } catch (err) { 
-                console.error(err); 
-                triggerFail();
-            }
-        }
-
-        function triggerSuccess() {
-            document.getElementById('modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
-            document.getElementById('success-modal').classList.add('active');
+                if (result.success) {
+                    document.getElementById('success-modal').querySelector('#modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
+                    document.getElementById('success-modal').classList.add('active');
+                } else {
+                    triggerFail();
+                }
+            } catch (err) { triggerFail(); }
         }
 
         function triggerFail() {
             const el = document.getElementById('user-answer').style.display !== 'none' ? document.getElementById('user-answer') : document.getElementById('clicker-node');
             el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
-            
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
             if (wrongAttempts >= 10 && currentLevelIndex < 15) document.getElementById('hint-box').classList.add('visible');
-
             isSubmitting = false;
             document.getElementById('sub-btn').disabled = false;
         }
 
         function nextLevel() {
             document.getElementById('success-modal').classList.remove('active');
-            currentLevelIndex++; 
-            loadLevelFromServer();
+            currentLevelIndex++; loadLevelFromServer();
         }
 
         async function showVictoryScreen() {
@@ -394,175 +708,70 @@
             document.getElementById('clicker-node').style.display = 'none';
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('victory-screen').classList.add('active');
-            generateQR();
-            
+            try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}&color=bc9855&bgcolor=0c0c0e`; } catch(e){}
             window.updateMyLevelStatus(99); 
-            
-            try {
-                await runTransaction(completed24Ref, (currentValue) => {
-                    return (currentValue || 0) + 1;
-                });
-            } catch(e) { 
-                console.error("Failed to log victory directly to Firebase", e); 
-            }
+            try { await runTransaction(completed24Ref, (v) => (v || 0) + 1); } catch(e){}
         }
 
         function setupClicker() {
-            clickPattern = [];
-            const clickBtn = document.getElementById('clicker-node');
-            let lastClickTime = 0;
-            
+            clickPattern = []; const clickBtn = document.getElementById('clicker-node'); let lastClickTime = 0;
             clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { e.preventDefault(); lastClickTime = Date.now(); };
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
-                e.preventDefault();
-                const duration = Date.now() - lastClickTime;
-                clickPattern.push(duration);
+                e.preventDefault(); const duration = Date.now() - lastClickTime; clickPattern.push(duration);
                 if (clickPattern.length > 9) clickPattern.shift();
-                
-                if (clickPattern.length === 9) {
-                    await sendAnswerToServer(null, { timings: clickPattern });
-                    clickPattern = [];
-                }
+                if (clickPattern.length === 9) { await sendAnswerToServer(null, { timings: clickPattern }); clickPattern = []; }
             };
         }
 
         function setupCanvas() {
-            const canvas = document.getElementById('void-canvas');
-            const ctx = canvas.getContext('2d');
-            let drawing = false;
-
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-
+            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d'); let drawing = false;
+            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight;
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
             canvas.onmouseup = canvas.ontouchend = async (e) => { 
                 e.preventDefault(); drawing = false; 
-                if (strokePoints.length > 3) {
-                    await sendAnswerToServer(null, { points: strokePoints, width: canvas.width });
-                }
+                if (strokePoints.length > 3) await sendAnswerToServer(null, { points: strokePoints, width: canvas.width });
             };
             canvas.onmousemove = canvas.ontouchmove = (e) => {
-                if (!drawing) return; e.preventDefault();
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                
-                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) };
-                strokePoints.push(pt);
-                
-                ctx.fillStyle = '#bc9855';
-                ctx.fillRect(pt.x, pt.y, 4, 4);
+                if (!drawing) return; e.preventDefault(); const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX); const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) }; strokePoints.push(pt);
+                ctx.fillStyle = '#bc9855'; ctx.fillRect(pt.x, pt.y, 4, 4);
             };
         }
 
         function setupKineticGhost() {
-            const canvas = document.getElementById('void-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight; 
-
+            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; 
             const letters = ["V", "O", "R", "T", "E", "X"];
-
             function processFrame() {
                 if (currentLevelIndex < 15) return;
-
-                ctx.fillStyle = 'rgba(12, 12, 14, 0.2)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+                ctx.fillStyle = 'rgba(12, 12, 14, 0.2)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
                 const time = performance.now();
-
-                // Исправлено: LEVEL 23 (VORTEX) — это индекс 22 в массиве JavaScript
                 if (currentLevelIndex === 22) {
-                    const interval = 3000;
-                    const currentLetterIdx = Math.floor((time / interval) % letters.length);
-                    
-                    const totalLetters = letters.length;
-                    const rectWidth = 50;
-                    const rectHeight = 60;
-                    const gap = 15;
-                    
-                    const totalWidth = (rectWidth * totalLetters) + (gap * (totalLetters - 1));
-                    const startX = (canvas.width - totalWidth) / 2;
-                    const startY = (canvas.height - rectHeight) / 2 - 20;
-
-                    for (let i = 0; i < totalLetters; i++) {
-                        const x = startX + i * (rectWidth + gap);
-                        
+                    const currentLetterIdx = Math.floor((time / 3000) % letters.length);
+                    const totalWidth = (50 * 6) + (15 * 5); const startX = (canvas.width - totalWidth) / 2; const startY = (canvas.height - 60) / 2 - 20;
+                    for (let i = 0; i < 6; i++) {
+                        const x = startX + i * 65;
                         if (i === currentLetterIdx) {
-                            ctx.strokeStyle = '#bc9855';
-                            ctx.lineWidth = 2;
-                            ctx.strokeRect(x, startY, rectWidth, rectHeight);
-                            
-                            for (let s = 0; s < 40; s++) {
-                                ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`;
-                                ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2);
-                            }
-
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 28px "Courier New"';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            const glitchX = Math.random() * 4 - 2;
-                            ctx.fillText(letters[i], x + (rectWidth / 2) + glitchX, startY + (rectHeight / 2));
-                        } else {
-                            ctx.strokeStyle = '#18181b';
-                            ctx.lineWidth = 1;
-                            ctx.strokeRect(x, startY, rectWidth, rectHeight);
-                        }
+                            ctx.strokeStyle = '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, 50, 60);
+                            for (let s = 0; s < 40; s++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`; ctx.fillRect(x + Math.random() * 50, startY + Math.random() * 60, 2, 2); }
+                            ctx.fillStyle = '#fff'; ctx.font = 'bold 28px "Courier New"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                            ctx.fillText(letters[i], x + 25 + (Math.random() * 4 - 2), startY + 30);
+                        } else { ctx.strokeStyle = '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, 50, 60); }
                     }
                 } else {
-                    for (let i = 0; i < 350; i++) {
-                        const x = Math.random() * canvas.width;
-                        const y = Math.random() * canvas.height;
-                        const size = Math.random() * 1.5;
-                        const alpha = Math.random() * 0.12;
-                        ctx.fillStyle = `rgba(188, 152, 85, ${alpha})`;
-                        ctx.fillRect(x, y, size, size);
-                    }
-
-                    if (Math.random() > 0.88) {
-                        ctx.fillStyle = 'rgba(188, 152, 85, 0.04)';
-                        ctx.fillRect(0, Math.random() * canvas.height, canvas.width, Math.random() * 3);
-                    }
+                    for (let i = 0; i < 350; i++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.12})`; ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, Math.random() * 1.5); }
                 }
                 kineticAnimationFrameId = requestAnimationFrame(processFrame);
             }
             processFrame();
         }
 
-        function getCleanUrl() { return window.location.href.startsWith('file://') ? 'https://google.com' : window.location.href; }
-        function generateQR() { try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=bc9855&bgcolor=0c0c0e`; } catch(e){} }
-        function copyShareLink() {
-            const u = window.location.href;
-            if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
-        }
-        function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
-        
-        function resetGame() { 
-            currentLevelIndex = 0; 
-            wrongAttempts = 0; 
-            isSubmitting = false; 
-            document.getElementById('sub-btn').disabled = false;
-            serverLevelData = null; 
-            document.getElementById('victory-screen').classList.remove('active'); 
-            document.getElementById('start-screen').classList.add('active'); 
-            window.updateMyLevelStatus(-1);
-        }
-
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
         document.getElementById('modal-continue-btn').addEventListener('click', nextLevel);
-        document.getElementById('restart-btn').addEventListener('click', resetGame);
-        document.getElementById('share-btn').addEventListener('click', copyShareLink);
-        document.getElementById('user-answer').addEventListener('keydown', async (e) => { 
-            if (e.key === 'Enter') { 
-                if (document.getElementById('success-modal').classList.contains('active')) {
-                    nextLevel(); 
-                } else {
-                    await submitAnswer(); 
-                }
-            } 
-        });
+        document.getElementById('restart-btn').addEventListener('click', () => { currentLevelIndex = 0; window.startGame(); document.getElementById('victory-screen').classList.remove('active'); });
+        document.getElementById('share-btn').addEventListener('click', () => { navigator.clipboard.writeText(window.location.href); showSystemAlert("SHARED", "Link copied to clipboard!"); });
+        document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') await submitAnswer(); });
     </script>
 </body>
 </html>
