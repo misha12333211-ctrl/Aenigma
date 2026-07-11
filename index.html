@@ -73,7 +73,7 @@
         .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .qr-frame img { width: 150px; height: 150px; }
-        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; }
+        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         .like-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s; }
         .like-btn:hover { border-color: var(--accent); color: var(--accent); }
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
@@ -135,7 +135,9 @@
     </div>
 
     <footer>
-        <div class="stats">ONLINE: <strong id="online-count">0</strong></div>
+        <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
+        <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
+        <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
     </footer>
 
@@ -158,18 +160,29 @@
         const likesRef = ref(db, 'counters/likes');
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
+        const completed24Ref = ref(db, 'counters/completed24');
+
+        let currentLevelIndex = 0;
+        let wrongAttempts = 0;
+        let clickPattern = [];
+        let strokePoints = [];
+        let kineticAnimationFrameId = null;
+        let serverLevelData = null;
+        let myUserRef = null;
 
         onValue(likesRef, (snap) => { 
             const serverLikes = snap.val() || 0;
             document.getElementById('likes-count').innerText = serverLikes; 
         });
 
+        onValue(completed24Ref, (snap) => {
+            document.getElementById('completed-24-count').innerText = snap.val() || 0;
+        });
 
         document.getElementById('like-btn').addEventListener('click', async () => {
             const likeBtnEl = document.getElementById('like-btn');
             
             if (localStorage.getItem('aenigma_liked')) {
-
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
                 return;
@@ -178,12 +191,10 @@
             likeBtnEl.style.pointerEvents = 'none';
 
             try {
-
                 await runTransaction(likesRef, (currentValue) => {
                     return (currentValue || 0) + 1;
                 });
                 
-
                 localStorage.setItem('aenigma_liked', 'true');
                 likeBtnEl.style.color = 'var(--accent)';
                 likeBtnEl.style.borderColor = 'var(--accent)';
@@ -196,17 +207,21 @@
             }
         });
 
-
         if (localStorage.getItem('aenigma_liked')) {
             document.getElementById('like-btn').style.color = 'var(--accent)';
             document.getElementById('like-btn').style.borderColor = 'var(--accent)';
         }
 
-        let myUserRef = null;
+        window.updateMyLevelStatus = function(levelIndex) {
+            if (myUserRef) {
+                set(myUserRef, { active: true, level: levelIndex });
+            }
+        }
+
         onValue(connectedRef, (snap) => {
             if (snap.val() === true) {
                 myUserRef = push(onlineUsersRef);
-                set(myUserRef, true);
+                set(myUserRef, { active: true, level: -1 });
                 onDisconnect(myUserRef).remove();
             }
         });
@@ -214,24 +229,27 @@
         onValue(onlineUsersRef, (snap) => {
             try {
                 const data = typeof snap.val === 'function' ? snap.val() : snap;
+                let totalOnline = 0;
+                let layerOnline = 0;
+
                 if (data) {
-                    const count = Object.keys(data).length;
-                    document.getElementById('online-count').innerText = count;
-                } else {
-                    document.getElementById('online-count').innerText = 0;
-                }
+                    const users = Object.values(data);
+                    totalOnline = users.length;
+                    
+                    users.forEach(user => {
+                        if (user && user.level === currentLevelIndex) {
+                            layerOnline++;
+                        }
+                    });
+                } 
+                document.getElementById('online-count').innerText = totalOnline;
+                document.getElementById('layer-online-count').innerText = layerOnline;
             } catch (err) {
                 console.error("Online formatting fail fallback engaged:", err);
                 document.getElementById('online-count').innerText = 1;
+                document.getElementById('layer-online-count').innerText = 1;
             }
         });
-
-        let currentLevelIndex = 0;
-        let wrongAttempts = 0;
-        let clickPattern = [];
-        let strokePoints = [];
-        let kineticAnimationFrameId = null;
-        let serverLevelData = null;
 
         window.startGame = function() {
             document.getElementById('start-screen').classList.remove('active');
@@ -248,6 +266,8 @@
 
                 if (data.finished) { showVictoryScreen(); return; }
                 serverLevelData = data;
+
+                window.updateMyLevelStatus(currentLevelIndex);
 
                 document.getElementById('level-title').textContent = data.title;
                 document.getElementById('level-desc').innerHTML = data.desc;
@@ -329,12 +349,18 @@
             currentLevelIndex++; loadLevelFromServer();
         }
 
-        function showVictoryScreen() {
+        async function showVictoryScreen() {
             document.getElementById('void-canvas').style.display = 'none';
             document.getElementById('clicker-node').style.display = 'none';
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('victory-screen').classList.add('active');
             generateQR();
+            
+            window.updateMyLevelStatus(99); 
+            
+            try {
+                await fetch(`${API_URL}/addCompleted24`, { method: 'POST' });
+            } catch(e) { console.error("Failed to log victory to server", e); }
         }
 
         function setupClicker() {
@@ -462,7 +488,15 @@
             if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
         }
         function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
-        function resetGame() { currentLevelIndex = 0; wrongAttempts = 0; serverLevelData = null; document.getElementById('victory-screen').classList.remove('active'); document.getElementById('start-screen').classList.add('active'); }
+        
+        function resetGame() { 
+            currentLevelIndex = 0; 
+            wrongAttempts = 0; 
+            serverLevelData = null; 
+            document.getElementById('victory-screen').classList.remove('active'); 
+            document.getElementById('start-screen').classList.add('active'); 
+            window.updateMyLevelStatus(-1);
+        }
 
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
         document.getElementById('modal-continue-btn').addEventListener('click', nextLevel);
