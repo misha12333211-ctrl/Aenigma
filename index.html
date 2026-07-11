@@ -15,10 +15,7 @@
             --error: #7f1d1d;
             --success: #15803d;
         }
-        * { 
-            box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
         body {
             background-color: var(--bg-color); color: var(--text-main); min-height: 100vh;
             display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 20px;
@@ -48,7 +45,6 @@
             touch-action: manipulation;
         }
         .btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
-        .btn:disabled { border-color: var(--text-muted); color: var(--text-muted); cursor: not-allowed; box-shadow: none; background: none; }
         .btn.secondary { border-color: var(--text-muted); color: var(--text-muted); }
         .btn.secondary:hover { background: var(--text-muted); color: var(--bg-color); }
         
@@ -59,8 +55,11 @@
         }
         .clicker-btn:active { background: rgba(188, 152, 85, 0.2); transform: scale(0.95); }
         
-        #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; pointer-events: none; }
+        #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; }
         
+        .antiai-trap {
+            position: absolute; overflow: hidden; clip: rect(0, 0, 0, 0); width: 1px; height: 1px; margin: -1px; color: transparent; background: transparent;
+        }
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         .modal-overlay {
@@ -74,125 +73,18 @@
         .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .qr-frame img { width: 150px; height: 150px; }
-        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px; }
+        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         .like-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s; }
         .like-btn:hover { border-color: var(--accent); color: var(--accent); }
-        
-        .donate-btn, .privacy-trigger-btn {
-            background: none; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px;
-            cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 1px; display: inline-block;
-        }
-        .donate-btn:hover, .privacy-trigger-btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
-        .privacy-trigger-btn { border-color: var(--border); color: var(--text-muted); }
-
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
-
-        #open-chat-btn { border-color: var(--border) !important; }
-        #open-chat-btn:hover {
-            border-color: var(--accent) !important;
-            background: rgba(188, 152, 85, 0.08) !important;
-            box-shadow: 0 0 12px rgba(188, 152, 85, 0.25);
-        }
-        #open-chat-btn:hover svg { transform: scale(1.08); }
-
-        .chat-msg-row {
-            word-wrap: break-word;
-            word-break: break-all;
-            white-space: pre-wrap;
-            line-height: 1.5;
-            text-align: left;
-            width: 100%;
-            margin-bottom: 8px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        .my-msg, .other-msg {
-            display: inline-block;
-            width: 100%;
-            padding: 2px 4px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        .my-msg {
-            cursor: pointer;
-            transition: background 0.2s;
-            border-radius: 2px;
-        }
-        .my-msg:hover {
-            background: rgba(188, 152, 85, 0.08);
-        }
-
-        .context-menu {
-            display: none;
-            position: fixed;
-            background: #070709;
-            border: 1px solid var(--accent);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.9), 0 0 10px rgba(188, 152, 85, 0.15);
-            z-index: 2000;
-            padding: 5px 0;
-            min-width: 140px;
-        }
-        .context-menu-item {
-            padding: 10px 15px;
-            font-size: 0.75rem;
-            color: var(--text-main);
-            cursor: pointer;
-            text-align: left;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        .context-menu-item:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-            font-weight: bold;
-        }
-        .context-menu-item.danger:hover {
-            background: var(--error);
-            color: #fff;
-        }
-
-        #chat-change-nick-btn {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-left: 8px;
-            transition: color 0.2s;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        #chat-change-nick-btn:hover {
-            color: var(--accent);
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 20px 10px; }
-            main { padding: 35px 15px; }
-            header { padding-bottom: 15px; }
-            .modal-card { padding: 25px 15px; }
-            #chat-messages { height: 260px !important; padding: 12px !important; }
-            .chat-input-container { flex-direction: column; gap: 10px !important; }
-            #chat-input { text-align: left !important; padding: 12px !important; margin-bottom: 0 !important; }
-            #chat-send-btn { width: 100%; padding: 12px !important; }
-        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="stats">CORE:// AENIGMA_MARK_2.3</div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div class="stats">ATTEMPTS:// <strong id="attempt-counter">0</strong>/10</div>
-            <button id="open-chat-btn" title="Open Communication Link" style="background: none; border: 1px solid var(--border); padding: 6px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; border-radius: 2px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.3s;">
-                    <path d="M18 2H6C3.79 2 2 3.79 2 6v6c0 2.21 1.79 4 4 4h1v4l4-4h7c2.21 0 4-1.79 4-4V6c0-2.21-1.79-4-4-4z" fill="var(--accent)"/>
-                    <path d="M6 6h12v1.5H6V6zm0 3.5h12V11H6V9.5zm0 3.5h8v1.5H6V13z" fill="var(--bg-color)"/>
-                    <path d="M19 9h2c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2h-1l-3 3v-3h-5c-1.1 0-2-.9-2-2v-1.1c.64-.17 1.24-.47 1.76-.88L15 16h5v-5.5c0-.52-.13-1.01-.35-1.45.11-.03.23-.05.35-.05z" fill="var(--accent)" opacity="0.85"/>
-                </svg>
-            </button>
-        </div>
+        <div class="stats">ATTEMPTS:// <strong id="attempt-counter">0</strong>/10</div>
     </header>
 
     <main id="main-container">
@@ -223,9 +115,11 @@
         <div id="victory-screen" class="screen">
             <h1>GOD MODE ENGAGED</h1>
             <p>Unbelievable. You conquered all 24 layers, bypassing the anti-AI sector. You have proven absolute cognitive dominance over machine logic.</p>
-            <div class="btn-container">
-                <button class="btn" id="restart-btn">RESTART MODULE</button>
-                <button class="btn secondary" id="share-btn">COPY SHARE LINK</button>
+            <div class="btn-container" style="flex-direction: column; align-items: center; gap: 15px;">
+                <div style="display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap;">
+                    <button class="btn" id="restart-btn">RESTART MODULE</button>
+                    <button class="btn secondary" id="share-btn">COPY SHARE LINK</button>
+                </div>
             </div>
             <div class="share-section">
                 <div class="stats">CHALLENGE YOUR FRIENDS:</div>
@@ -236,116 +130,34 @@
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
+            <!-- Перенесенная статистика наверх модалки -->
+            <div class="stats" style="margin-bottom: 20px; font-weight: bold;">ON THIS LAYER: <strong id="modal-layer-online-count">0</strong></div>
             <h2>ACCESS GRANTED</h2>
             <p id="modal-message">...</p>
             <button class="btn" id="modal-continue-btn">CONTINUE</button>
         </div>
     </div>
 
-    <div id="chat-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 550px; width: 95%; border-color: var(--accent); box-shadow: 0 0 30px rgba(188, 152, 85, 0.15); padding: 30px 25px;">
-            <h2 style="color: var(--accent); font-size: 0.9rem; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between; letter-spacing: 1px; align-items: center; width: 100%;">
-                <span id="chat-title-mode" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 85%; display: flex; align-items: center;">
-                    <span>// LINK:&nbsp;</span>
-                    <span id="chat-my-nick-display" style="color:#fff;">...</span>
-                    <span id="chat-change-nick-btn">[CHANGE]</span>
-                </span>
-                <span style="display: flex; gap: 10px; align-items: center; flex-shrink: 0;">
-                    <span id="close-chat-btn" style="cursor: pointer; color: var(--text-muted); font-size: 1rem;">[X]</span>
-                </span>
-            </h2>
-            
-            <div id="chat-messages" style="height: 280px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
-            </div>
-            
-            <div class="chat-input-container" style="display: flex; gap: 10px;">
-                <input type="text" id="chat-input" placeholder="ENTER TRANSMISSION..." autocomplete="off" style="margin-bottom: 0; padding: 12px; font-size: 0.9rem; text-align: left;">
-                <button id="chat-send-btn" class="btn" style="padding: 12px 25px; font-size: 0.85rem;">SEND</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="privacy-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 600px; width: 95%; border-color: var(--border); box-shadow: 0 0 30px rgba(255,255,255,0.05); padding: 30px 25px;">
-            <h2 style="color: var(--text-main); font-size: 0.9rem; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between; letter-spacing: 1px;">
-                <span>// PRIVACY_POLICY.LOG</span>
-                <span id="close-privacy-btn" style="cursor: pointer; color: var(--text-muted);">[X]</span>
-            </h2>
-            <div style="height: 300px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.8rem; color: #a1a1aa; text-align: left; line-height: 1.6; display: flex; flex-direction: column; gap: 15px;">
-                <div><strong>1. DATA MINING & COLLECTION</strong><br>Aenigma Project (hosted at https://aenigma-mark-2-3.onrender.com/) does not request, compile, or store personal identity matrices. Real names, surnames, and personal identifications are strictly filtered by automated sub-routines. Local node tracking uses zero-knowledge variables.</div>
-                <div><strong>2. LIVE SYNC NODES (CHAT & METRICS)</strong><br>Public data streams such as virtual handles (aliases) and standard solution timings are compiled strictly to align multi-user environments. Data structures are transmitted using stateless crypt-handshakes.</div>
-                <div><strong>3. RETENTION POLICY</strong><br>Session parameters, temporary tokens, and real-time environment syncs expire automatically upon connection termination or remote server cycles. No archival records are constructed.</div>
-                <div><strong>4. NODE TERMINATION</strong><br>Users hold total authority to purge local identification vectors at any step by modifying local application storage keys or re-routing network tunnels.</div>
-            </div>
-            <button class="btn secondary" id="privacy-ok-btn" style="margin-top: 20px; width: 100%; padding: 12px;">CLOSE_STREAM</button>
-        </div>
-    </div>
-
-    <div id="chat-context-menu" class="context-menu">
-        <div class="context-menu-item" id="ctx-edit-btn">> EDIT_DATA</div>
-        <div class="context-menu-item danger" id="ctx-del-btn">> PURGE_DATA</div>
-    </div>
-
     <footer>
         <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
         <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
-        <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
+        <div class="stats">COMPLETED L24: <strong id="completed-24-count">0</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
-        <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">☕ SUPPORT_SYSTEM</a>
-        <button id="privacy-trigger" class="privacy-trigger-btn">🔒 PRIVACY POLICY</button>
-        <div class="stats" style="color: var(--text-muted); width: 100%; text-align: center; margin-top: 15px;">© 2026 Stanislav A.</div>
+        
+        <!-- Кнопка доната Сбера в Футере -->
+        <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" style="text-decoration: none;">
+            <button class="like-btn" style="border-color: #22c55e; color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);">⚡ SUPPORT PROJECT (DONATE)</button>
+        </a>
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, onDisconnect, set, remove, runTransaction, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        // Блокировка контекстного меню теперь работает только для окна сообщений чата
-        document.addEventListener('contextmenu', (e) => {
-            if (!e.target.closest('#chat-messages')) {
-                // Стандартное контекстное меню разрешено везде, кроме самого чата
-            } else {
-                e.preventDefault();
-            }
-        });
-
-        // Блокировка клавиш F12, Ctrl+Shift+I/J/C, Ctrl+U полностью удалена
-
-        function containsRealIdentityName(text) {
-            const clean = text.trim();
-            const validCharsPattern = /^[\p{L}\p{N}_\-]+$/u;
-            if (!validCharsPattern.test(clean.replace(/\s+/g, ''))) {
-                return true; 
-            }
-            
-            const parts = clean.split(/\s+/);
-            if (parts.length >= 2) {
-                const capitalizedPattern = /^[\p{Lu}\p{Lt}]/u; 
-                let capitalizedCount = 0;
-                parts.forEach(p => {
-                    if (capitalizedPattern.test(p)) capitalizedCount++;
-                });
-                if (capitalizedCount >= 2) return true;
-                
-                const asianPattern = /^[\p{CjkUnifiedIdeographs}]+$/u;
-                let asianCount = 0;
-                parts.forEach(p => { if (asianPattern.test(p)) asianCount++; });
-                if (asianCount >= 2) return true;
-            }
-
-            const camelCasePattern = /[\p{Ll}\p{Lm}\p{Lo}][\p{Lu}\p{Lt}]/u;
-            if (camelCasePattern.test(clean)) return true;
-
-            const pureAsianPattern = /^[\p{CjkUnifiedIdeographs}]{2,4}$/u;
-            if (pureAsianPattern.test(clean)) return true;
-
-            return false;
-        }
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, onDisconnect, set, runTransaction } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
             authDomain: "aenigma-mark-23.firebaseapp.com",
-            databaseURL: "https://aenigma-mark-2-3-default-rtdb.europe-west1.firebasedatabase.app",
+            databaseURL: "https://aenigma-mark-23-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "aenigma-mark-23", storageBucket: "aenigma-mark-23.firebasestorage.app",
             messagingSenderId: "318632324088", appId: "1:318632324088:web:c9ff426bac663a64ca840d"
         };
@@ -358,45 +170,14 @@
         const connectedRef = ref(db, ".info/connected");
         const onlineUsersRef = ref(db, "online_users");
         const completed24Ref = ref(db, 'counters/completed24');
-        const chatRef = ref(db, 'chat_messages');
 
         let currentLevelIndex = 0;
         let wrongAttempts = 0;
-        let isSubmitting = false; 
         let clickPattern = [];
         let strokePoints = [];
         let kineticAnimationFrameId = null;
         let serverLevelData = null;
         let myUserRef = null;
-
-        if(!localStorage.getItem('aenigma_nick')) {
-            localStorage.setItem('aenigma_nick', `OPERATOR_${Math.floor(100 + Math.random() * 900)}`);
-        }
-        let playerNickname = localStorage.getItem('aenigma_nick');
-
-        let editMessageKey = null; 
-        let isNicknameChangingMode = false;
-        let selectedMessageKey = null;
-        let selectedMessageText = "";
-        let longPressTimer = null;
-
-        const chatModal = document.getElementById('chat-modal');
-        const openChatBtn = document.getElementById('open-chat-btn');
-        const closeChatBtn = document.getElementById('close-chat-btn');
-        const chatMessagesEl = document.getElementById('chat-messages');
-        const chatInputEl = document.getElementById('chat-input');
-        const chatSendBtnEl = document.getElementById('chat-send-btn');
-        const chatTitleMode = document.getElementById('chat-title-mode');
-        const chatMyNickDisplay = document.getElementById('chat-my-nick-display');
-        const chatChangeNickBtn = document.getElementById('chat-change-nick-btn');
-        const ctxMenu = document.getElementById('chat-context-menu');
-
-        const privacyModal = document.getElementById('privacy-modal');
-        const privacyTrigger = document.getElementById('privacy-trigger');
-        const closePrivacyBtn = document.getElementById('close-privacy-btn');
-        const privacyOkBtn = document.getElementById('privacy-ok-btn');
-
-        chatMyNickDisplay.textContent = playerNickname;
 
         onValue(likesRef, (snap) => { 
             const serverLikes = snap.val() || 0;
@@ -409,14 +190,20 @@
 
         document.getElementById('like-btn').addEventListener('click', async () => {
             const likeBtnEl = document.getElementById('like-btn');
+            
             if (localStorage.getItem('aenigma_liked')) {
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
                 return;
             }
+
             likeBtnEl.style.pointerEvents = 'none';
+
             try {
-                await runTransaction(likesRef, (currentValue) => { return (currentValue || 0) + 1; });
+                await runTransaction(likesRef, (currentValue) => {
+                    return (currentValue || 0) + 1;
+                });
+                
                 localStorage.setItem('aenigma_liked', 'true');
                 likeBtnEl.style.color = 'var(--accent)';
                 likeBtnEl.style.borderColor = 'var(--accent)';
@@ -435,7 +222,9 @@
         }
 
         window.updateMyLevelStatus = function(levelIndex) {
-            if (myUserRef) set(myUserRef, { active: true, level: levelIndex });
+            if (myUserRef) {
+                set(myUserRef, { active: true, level: levelIndex });
+            }
         }
 
         onValue(connectedRef, (snap) => {
@@ -448,17 +237,28 @@
 
         onValue(onlineUsersRef, (snap) => {
             try {
-                const data = snap.val();
-                let totalOnline = 0; let layerOnline = 0;
+                const data = typeof snap.val === 'function' ? snap.val() : snap;
+                let totalOnline = 0;
+                let layerOnline = 0;
+
                 if (data) {
-                    const users = Object.values(data); totalOnline = users.length;
-                    users.forEach(user => { if (user && user.level === currentLevelIndex) layerOnline++; });
+                    const users = Object.values(data);
+                    totalOnline = users.length;
+                    
+                    users.forEach(user => {
+                        if (user && user.level === currentLevelIndex) {
+                            layerOnline++;
+                        }
+                    });
                 } 
                 document.getElementById('online-count').innerText = totalOnline;
                 document.getElementById('layer-online-count').innerText = layerOnline;
+                document.getElementById('modal-layer-online-count').innerText = layerOnline; // Синхронизация с модалкой
             } catch (err) {
+                console.error("Online formatting fail fallback engaged:", err);
                 document.getElementById('online-count').innerText = 1;
                 document.getElementById('layer-online-count').innerText = 1;
+                document.getElementById('modal-layer-online-count').innerText = 1;
             }
         });
 
@@ -470,11 +270,14 @@
 
         async function loadLevelFromServer() {
             if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
+
             try {
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
                 const data = await response.json();
+
                 if (data.finished) { showVictoryScreen(); return; }
                 serverLevelData = data;
+
                 window.updateMyLevelStatus(currentLevelIndex);
 
                 document.getElementById('level-title').textContent = data.title;
@@ -488,33 +291,40 @@
 
                 inputField.style.display = 'block'; inputField.value = '';
                 clickBtn.style.display = 'none'; ctrlBlock.style.display = 'flex';
-                canvas.style.display = 'none'; canvas.style.pointerEvents = 'none'; 
+                canvas.style.display = 'none'; canvas.style.pointerEvents = 'auto'; 
                 
                 if (currentLevelIndex !== 23) {
                     wrongAttempts = 0;
                     document.getElementById('attempt-counter').textContent = "0";
+                } else {
+                    document.getElementById('attempt-counter').textContent = wrongAttempts;
                 }
                 document.getElementById('hint-box').classList.remove('visible');
 
-                if (data.type === "DYNAMIC") { inputField.style.display = 'block'; ctrlBlock.style.display = 'flex'; clickBtn.style.display = 'none'; }
-                if (data.type === "CLICKER") { inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block'; setupClicker(); }
-                if (data.type === "CANVAS") { inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; canvas.style.display = 'block'; canvas.style.pointerEvents = 'auto'; setupCanvas(); }
-                if (currentLevelIndex >= 15 && data.type !== "CANVAS") { canvas.style.display = 'block'; canvas.style.pointerEvents = 'none'; setupKineticGhost(); }
-                if (inputField.style.display !== 'none') inputField.focus();
+                if (currentLevelIndex === 18) {
+                    inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; clickBtn.style.display = 'block';
+                    setupClicker();
+                }
 
-                isSubmitting = false; document.getElementById('sub-btn').disabled = false;
-            } catch (err) { 
-                console.error(err); isSubmitting = false; document.getElementById('sub-btn').disabled = false;
-            }
+                if (currentLevelIndex === 19) {
+                    inputField.style.display = 'none'; ctrlBlock.style.display = 'none'; canvas.style.display = 'block';
+                    setupCanvas();
+                }
+
+                if (currentLevelIndex >= 15 && currentLevelIndex !== 19) { 
+                    canvas.style.display = 'block';
+                    canvas.style.pointerEvents = 'none'; 
+                    setupKineticGhost();
+                }
+
+                if (inputField.style.display !== 'none') inputField.focus();
+            } catch (err) { console.error(err); }
         }
 
         async function submitAnswer() {
-            if (isSubmitting) return;
             const inputField = document.getElementById('user-answer');
-            if (inputField.style.display === 'none') return;
-            if (inputField.value.trim() === "") return;
+            if (!inputField || inputField.value.trim() === "") return;
             
-            isSubmitting = true; document.getElementById('sub-btn').disabled = true;
             if (currentLevelIndex === 23) {
                 await sendAnswerToServer(inputField.value, { currentAttempts: wrongAttempts });
             } else {
@@ -530,8 +340,16 @@
                     body: JSON.stringify({ index: currentLevelIndex, answer: answerString, rawData: rawData })
                 });
                 const result = await response.json();
-                if (result.success) triggerSuccess(); else triggerFail();
-            } catch (err) { console.error(err); triggerFail(); }
+                if (result.success) {
+                    if (currentLevelIndex === 23) {
+                        showVictoryScreen();
+                    } else {
+                        triggerSuccess();
+                    }
+                } else {
+                    triggerFail();
+                }
+            } catch (err) { console.error(err); }
         }
 
         function triggerSuccess() {
@@ -540,12 +358,20 @@
         }
 
         function triggerFail() {
-            const el = document.getElementById('user-answer').style.display !== 'none' ? document.getElementById('user-answer') : document.getElementById('clicker-node');
-            el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
-            if (wrongAttempts >= 10 && currentLevelIndex < 15) document.getElementById('hint-box').classList.add('visible');
-            isSubmitting = false; document.getElementById('sub-btn').disabled = false;
+
+            // Тряска срабатывает ВСЕГДА при неверном ответе
+            const el = document.getElementById('user-answer').style.display !== 'none' 
+                ? document.getElementById('user-answer') 
+                : document.getElementById('clicker-node');
+            
+            el.classList.add('shake'); 
+            setTimeout(() => el.classList.remove('shake'), 400);
+
+            if (wrongAttempts >= 10 && currentLevelIndex < 15) {
+                document.getElementById('hint-box').classList.add('visible');
+            }
         }
 
         function nextLevel() {
@@ -553,70 +379,127 @@
             currentLevelIndex++; loadLevelFromServer();
         }
 
-        async function showVictoryScreen() {
+        function showVictoryScreen() {
             document.getElementById('void-canvas').style.display = 'none';
             document.getElementById('clicker-node').style.display = 'none';
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('victory-screen').classList.add('active');
-            generateQR(); window.updateMyLevelStatus(99); 
-            try { await runTransaction(completed24Ref, (currentValue) => { return (currentValue || 0) + 1; }); } catch(e) {}
+            generateQR();
+            window.updateMyLevelStatus(99); 
         }
 
         function setupClicker() {
-            clickPattern = []; const clickBtn = document.getElementById('clicker-node'); let lastClickTime = 0;
+            clickPattern = [];
+            const clickBtn = document.getElementById('clicker-node');
+            let lastClickTime = 0;
+            
             clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { e.preventDefault(); lastClickTime = Date.now(); };
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
-                e.preventDefault(); const duration = Date.now() - lastClickTime; clickPattern.push(duration);
+                e.preventDefault();
+                const duration = Date.now() - lastClickTime;
+                clickPattern.push(duration);
                 if (clickPattern.length > 9) clickPattern.shift();
-                if (clickPattern.length === 9) { await sendAnswerToServer(null, { timings: clickPattern }); clickPattern = []; }
+                
+                if (clickPattern.length === 9) {
+                    await sendAnswerToServer(null, { timings: clickPattern });
+                }
             };
         }
 
         function setupCanvas() {
-            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d'); let drawing = false;
-            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; ctx.clearRect(0,0, canvas.width, canvas.height);
+            const canvas = document.getElementById('void-canvas');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
             canvas.onmouseup = canvas.ontouchend = async (e) => { 
                 e.preventDefault(); drawing = false; 
-                if (strokePoints.length > 3) { await sendAnswerToServer(null, { points: strokePoints, width: canvas.width }); }
+                if (strokePoints.length > 3) {
+                    await sendAnswerToServer(null, { points: strokePoints, width: canvas.width });
+                }
             };
             canvas.onmousemove = canvas.ontouchmove = (e) => {
                 if (!drawing) return; e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) }; strokePoints.push(pt);
-                ctx.fillStyle = '#bc9855'; ctx.fillRect(pt.x, pt.y, 4, 4);
+                
+                const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) };
+                strokePoints.push(pt);
+                
+                ctx.fillStyle = '#bc9855';
+                ctx.fillRect(pt.x, pt.y, 4, 4);
             };
         }
 
         function setupKineticGhost() {
-            const canvas = document.getElementById('void-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; 
+            const canvas = document.getElementById('void-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight; 
+
             const letters = ["V", "O", "R", "T", "E", "X"];
+
             function processFrame() {
                 if (currentLevelIndex < 15) return;
-                ctx.fillStyle = 'rgba(12, 12, 14, 0.2)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = 'rgba(12, 12, 14, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 const time = performance.now();
+
                 if (currentLevelIndex === 22) {
-                    const interval = 3000; const currentLetterIdx = Math.floor((time / interval) % letters.length);
-                    const totalLetters = letters.length; const rectWidth = 50; const rectHeight = 60; const gap = 15;
+                    const interval = 3000;
+                    const currentLetterIdx = Math.floor((time / interval) % letters.length);
+                    
+                    const totalLetters = letters.length;
+                    const rectWidth = 50;
+                    const rectHeight = 60;
+                    const gap = 15;
+                    
                     const totalWidth = (rectWidth * totalLetters) + (gap * (totalLetters - 1));
-                    const startX = (canvas.width - totalWidth) / 2; const startY = (canvas.height - rectHeight) / 2 - 20;
+                    const startX = (canvas.width - totalWidth) / 2;
+                    const startY = (canvas.height - rectHeight) / 2 - 20;
+
                     for (let i = 0; i < totalLetters; i++) {
                         const x = startX + i * (rectWidth + gap);
+                        
                         if (i === currentLetterIdx) {
-                            ctx.strokeStyle = '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, rectWidth, rectHeight);
-                            for (let s = 0; s < 40; s++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`; ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2); }
-                            ctx.fillStyle = '#fff'; ctx.font = 'bold 28px "Courier New"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                            ctx.fillText(letters[i], x + (rectWidth / 2) + (Math.random() * 4 - 2), startY + (rectHeight / 2));
-                        } else { ctx.strokeStyle = '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, rectWidth, rectHeight); }
+                            ctx.strokeStyle = '#bc9855';
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                            
+                            for (let s = 0; s < 40; s++) {
+                                ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`;
+                                ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2);
+                            }
+
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 28px "Courier New"';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            const glitchX = Math.random() * 4 - 2;
+                            ctx.fillText(letters[i], x + (rectWidth / 2) + glitchX, startY + (rectHeight / 2));
+                        } else {
+                            ctx.strokeStyle = '#18181b';
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                        }
                     }
                 } else {
                     for (let i = 0; i < 350; i++) {
-                        ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.12})`; ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, Math.random() * 1.5);
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const size = Math.random() * 1.5;
+                        const alpha = Math.random() * 0.12;
+                        ctx.fillStyle = `rgba(188, 152, 85, ${alpha})`;
+                        ctx.fillRect(x, y, size, size);
                     }
-                    if (Math.random() > 0.88) { ctx.fillStyle = 'rgba(188, 152, 85, 0.04)'; ctx.fillRect(0, Math.random() * canvas.height, canvas.width, Math.random() * 3); }
+
+                    if (Math.random() > 0.88) {
+                        ctx.fillStyle = 'rgba(188, 152, 85, 0.04)';
+                        ctx.fillRect(0, Math.random() * canvas.height, canvas.width, Math.random() * 3);
+                    }
                 }
                 kineticAnimationFrameId = requestAnimationFrame(processFrame);
             }
@@ -632,8 +515,12 @@
         function fallbackCopy(t) { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; document.body.appendChild(ta); ta.focus(); ta.select(); try { document.execCommand('copy'); alert("Game link copied!"); } catch (e) {} document.body.removeChild(ta); }
         
         function resetGame() { 
-            currentLevelIndex = 0; wrongAttempts = 0; isSubmitting = false; document.getElementById('sub-btn').disabled = false;
-            serverLevelData = null; document.getElementById('victory-screen').classList.remove('active'); document.getElementById('start-screen').classList.add('active'); window.updateMyLevelStatus(-1);
+            currentLevelIndex = 0; 
+            wrongAttempts = 0; 
+            serverLevelData = null; 
+            document.getElementById('victory-screen').classList.remove('active'); 
+            document.getElementById('start-screen').classList.add('active'); 
+            window.updateMyLevelStatus(-1);
         }
 
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
@@ -641,194 +528,6 @@
         document.getElementById('restart-btn').addEventListener('click', resetGame);
         document.getElementById('share-btn').addEventListener('click', copyShareLink);
         document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') { if (document.getElementById('success-modal').classList.contains('active')) nextLevel(); else await submitAnswer(); } });
-
-        privacyTrigger.addEventListener('click', () => privacyModal.classList.add('active'));
-        closePrivacyBtn.addEventListener('click', () => privacyModal.classList.remove('active'));
-        privacyOkBtn.addEventListener('click', () => privacyModal.classList.remove('active'));
-        privacyModal.addEventListener('click', (e) => { if (e.target === privacyModal) privacyModal.classList.remove('active'); });
-
-        openChatBtn.addEventListener('click', () => {
-            chatModal.classList.add('active');
-            setTimeout(() => { chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight; chatInputEl.focus(); }, 50);
-        });
-        closeChatBtn.addEventListener('click', () => { chatModal.classList.remove('active'); resetEditMode(); closeContextMenu(); });
-        chatModal.addEventListener('click', (e) => { if (e.target === chatModal) { chatModal.classList.remove('active'); resetEditMode(); closeContextMenu(); } });
-
-        function resetEditMode() {
-            editMessageKey = null;
-            isNicknameChangingMode = false;
-            chatTitleMode.innerHTML = `<span>// LINK:&nbsp;</span><span id="chat-my-nick-display" style="color:#fff;">${playerNickname}</span><span id="chat-change-nick-btn">[CHANGE]</span>`;
-            document.getElementById('chat-change-nick-btn').addEventListener('click', bindChangeNickEvent);
-            chatInputEl.placeholder = "ENTER TRANSMISSION...";
-            chatInputEl.value = "";
-            chatSendBtnEl.textContent = "SEND";
-        }
-
-        function bindChangeNickEvent() {
-            if (isNicknameChangingMode) {
-                resetEditMode();
-            } else {
-                editMessageKey = null;
-                isNicknameChangingMode = true;
-                chatTitleMode.innerHTML = `<span>// REGISTERING IDENTITY...</span><span id="chat-change-nick-btn">[CANCEL]</span>`;
-                document.getElementById('chat-change-nick-btn').addEventListener('click', bindChangeNickEvent);
-                chatInputEl.value = playerNickname;
-                chatInputEl.placeholder = "NEW_NICK://";
-                chatSendBtnEl.textContent = "RENAME";
-                chatInputEl.focus();
-            }
-        }
-
-        chatChangeNickBtn.addEventListener('click', bindChangeNickEvent);
-
-        async function sendChatMessage() {
-            const text = chatInputEl.value.trim();
-            if (!text || text.length > 150) return;
-
-            if (isNicknameChangingMode) {
-                if (text.length < 3 || text.length > 16 || containsRealIdentityName(text)) {
-                    chatInputEl.classList.add('shake');
-                    setTimeout(() => chatInputEl.classList.remove('shake'), 400);
-                    return;
-                }
-                playerNickname = text;
-                localStorage.setItem('aenigma_nick', playerNickname);
-                resetEditMode();
-                triggerChatRerender();
-                return;
-            }
-
-            if (editMessageKey) {
-                try {
-                    const specificMsgRef = ref(db, `chat_messages/${editMessageKey}`);
-                    await set(specificMsgRef, { user: playerNickname, message: text, level: currentLevelIndex + 1, timestamp: Date.now() });
-                    resetEditMode();
-                } catch(err) { console.error("Edit failed:", err); }
-            } else {
-                try {
-                    const newMessageRef = push(chatRef);
-                    await set(newMessageRef, { user: playerNickname, message: text, level: currentLevelIndex + 1, timestamp: Date.now() });
-                    chatInputEl.value = '';
-                } catch (err) { console.error("Chat sync failed:", err); }
-            }
-        }
-
-        chatSendBtnEl.addEventListener('click', sendChatMessage);
-        chatInputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.stopPropagation(); sendChatMessage(); } });
-
-        window.openCustomContextMenu = function(e, key, text) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            selectedMessageKey = key;
-            selectedMessageText = text;
-
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-
-            ctxMenu.style.left = `${clientX}px`;
-            ctxMenu.style.top = `${clientY}px`;
-            ctxMenu.style.display = 'block';
-        };
-
-        function closeContextMenu() {
-            ctxMenu.style.display = 'none';
-        }
-
-        document.addEventListener('click', closeContextMenu);
-        chatMessagesEl.addEventListener('scroll', closeContextMenu);
-
-        document.getElementById('ctx-edit-btn').addEventListener('click', () => {
-            if (!selectedMessageKey) return;
-            isNicknameChangingMode = false;
-            editMessageKey = selectedMessageKey;
-            chatTitleMode.innerHTML = `<span style="color:#ef4444;">// EDIT_MODE_ACTIVE</span>`;
-            chatInputEl.value = selectedMessageText;
-            chatInputEl.placeholder = "EDITING TRANSMISSION...";
-            chatSendBtnEl.textContent = "SAVE";
-            chatInputEl.focus();
-            closeContextMenu();
-        });
-
-        document.getElementById('ctx-del-btn').addEventListener('click', async () => {
-            if (!selectedMessageKey) return;
-            try {
-                const specificMsgRef = ref(db, `chat_messages/${selectedMessageKey}`);
-                await remove(specificMsgRef);
-                if (editMessageKey === selectedMessageKey) resetEditMode();
-            } catch (e) { console.error(e); }
-            closeContextMenu();
-        });
-
-        window.bindLongPress = function(element, key, messageText) {
-            const startPress = (e) => {
-                if (e.type === 'mousedown' && e.button !== 0) return; 
-                if (longPressTimer) clearTimeout(longPressTimer);
-                longPressTimer = setTimeout(() => {
-                    window.openCustomContextMenu(e, key, messageText);
-                }, 450); 
-            };
-
-            const endPress = () => {
-                if (longPressTimer) clearTimeout(longPressTimer);
-            };
-
-            element.addEventListener('touchstart', startPress, { passive: false });
-            element.addEventListener('touchend', endPress);
-            element.addEventListener('touchmove', endPress);
-
-            element.addEventListener('contextmenu', (e) => {
-                window.openCustomContextMenu(e, key, messageText);
-            });
-            
-            element.addEventListener('mousedown', startPress);
-            element.addEventListener('mouseup', endPress);
-            element.addEventListener('mouseleave', endPress);
-        };
-
-        let lastSnapshotData = null;
-        function triggerChatRerender() {
-            if (lastSnapshotData) renderChatLogs(lastSnapshotData);
-        }
-
-        function renderChatLogs(data) {
-            chatMessagesEl.innerHTML = '';
-            if (data) {
-                Object.entries(data).forEach(([key, msg]) => {
-                    const msgEl = document.createElement('div');
-                    msgEl.className = "chat-msg-row";
-                    
-                    const isMyMessage = (msg.user === playerNickname);
-                    const clickableClass = isMyMessage ? "my-msg" : "other-msg";
-
-                    msgEl.innerHTML = `
-                        <span class="${clickableClass}" data-key="${key}">
-                            <span style="color: var(--accent); font-weight: bold; margin-bottom: -1px;">[LVL ${msg.level}] ${msg.user}:</span> <span style="color: #fff;">${escapeHtml(msg.message)}</span>
-                        </span>
-                    `;
-
-                    const clickableTarget = msgEl.querySelector('.my-msg');
-                    if (isMyMessage && clickableTarget) {
-                        window.bindLongPress(clickableTarget, key, msg.message);
-                    }
-
-                    chatMessagesEl.appendChild(msgEl);
-                });
-                chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-            } else {
-                chatMessagesEl.innerHTML = `<div style="color: var(--text-muted);">NO ACTIVE TRANSMISSIONS...</div>`;
-            }
-        }
-
-        const recentChatsQuery = query(chatRef, limitToLast(40));
-        onValue(recentChatsQuery, (snap) => {
-            lastSnapshotData = snap.val();
-            renderChatLogs(lastSnapshotData);
-        });
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
     </script>
 </body>
 </html>
