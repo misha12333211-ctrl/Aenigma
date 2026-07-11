@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,9 +58,6 @@
         
         #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; pointer-events: none; }
         
-        .antiai-trap {
-            position: absolute; overflow: hidden; clip: rect(0, 0, 0, 0); width: 1px; height: 1px; margin: -1px; color: transparent; background: transparent;
-        }
         .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         .modal-overlay {
@@ -87,7 +84,6 @@
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* Стиль для кнопки чата в шапке */
         #open-chat-btn { border-color: var(--border) !important; }
         #open-chat-btn:hover {
             border-color: var(--accent) !important;
@@ -96,32 +92,65 @@
         }
         #open-chat-btn:hover svg { transform: scale(1.08); }
 
-        /* Стили для элементов чата и автопереноса слов */
+        /* Чат лог */
         .chat-msg-row {
             word-wrap: break-word;
-            word-break: break-word;
+            word-break: break-all;
             white-space: pre-wrap;
-            line-height: 1.4;
+            line-height: 1.5;
+            text-align: left;
+            width: 100%;
         }
         .my-msg {
             cursor: pointer;
-            transition: background 0.2s;
-            padding: 2px 4px;
+            transition: background 0.2s, color 0.2s;
             border-radius: 2px;
+            padding: 1px 3px;
+            position: relative;
         }
         .my-msg:hover {
-            background: rgba(188, 152, 85, 0.15);
+            background: rgba(188, 152, 85, 0.12);
+            color: #fff;
         }
 
-        /* Адаптивная мобильная верстка */
+        /* Кастомное контекстное меню терминала */
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: #070709;
+            border: 1px solid var(--accent);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9), 0 0 10px rgba(188, 152, 85, 0.15);
+            z-index: 2000;
+            padding: 5px 0;
+            min-width: 140px;
+        }
+        .context-menu-item {
+            padding: 10px 15px;
+            font-size: 0.75rem;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .context-menu-item:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+        .context-menu-item.danger:hover {
+            background: var(--error);
+            color: #fff;
+        }
+
         @media (max-width: 600px) {
             body { padding: 20px 10px; }
-            main { padding: 30px 15px; }
+            main { padding: 35px 15px; }
             header { padding-bottom: 15px; }
             .modal-card { padding: 25px 15px; }
-            #chat-messages { height: 300px !important; padding: 10px !important; }
-            .chat-input-container { flex-direction: column; gap: 8px !important; }
-            #chat-input { text-align: left !important; padding: 12px !important; }
+            #chat-messages { height: 260px !important; padding: 12px !important; }
+            .chat-input-container { flex-direction: column; gap: 10px !important; }
+            #chat-input { text-align: left !important; padding: 12px !important; margin-bottom: 0 !important; }
             #chat-send-btn { width: 100%; padding: 12px !important; }
         }
     </style>
@@ -189,24 +218,29 @@
         </div>
     </div>
 
-    <!-- Терминальный адаптивный чат -->
+    <!-- Модальное окно чата -->
     <div id="chat-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 550px; width: 95%; border-color: var(--accent); box-shadow: 0 0 30px rgba(188, 152, 85, 0.15);">
-            <h2 style="color: var(--accent); font-size: 1.2rem; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between;">
+        <div class="modal-card" style="max-width: 550px; width: 95%; border-color: var(--accent); box-shadow: 0 0 30px rgba(188, 152, 85, 0.15); padding: 30px 25px;">
+            <h2 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between; letter-spacing: 1px;">
                 <span id="chat-title-mode">// COMM_LINK_ESTABLISHED</span>
                 <span id="close-chat-btn" style="cursor: pointer; color: var(--text-muted); font-size: 1rem;">[X]</span>
             </h2>
             
-            <!-- Окно чата с автопереносом длинного текста -->
-            <div id="chat-messages" style="height: 280px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left;">
-                <!-- Сообщения подгружаются динамически -->
+            <div id="chat-messages" style="height: 280px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Логи -->
             </div>
             
             <div class="chat-input-container" style="display: flex; gap: 10px;">
-                <input type="text" id="chat-input" placeholder="ENTER TRANSMISSION..." autocomplete="off" style="margin-bottom: 0; padding: 12px; font-size: 0.95rem; text-align: center;">
+                <input type="text" id="chat-input" placeholder="ENTER TRANSMISSION..." autocomplete="off" style="margin-bottom: 0; padding: 12px; font-size: 0.9rem; text-align: left;">
                 <button id="chat-send-btn" class="btn" style="padding: 12px 25px; font-size: 0.85rem;">SEND</button>
             </div>
         </div>
+    </div>
+
+    <!-- Кастомное контекстное меню -->
+    <div id="chat-context-menu" class="context-menu">
+        <div class="context-menu-item" id="ctx-edit-btn">> EDIT_DATA</div>
+        <div class="context-menu-item danger" id="ctx-del-btn">> PURGE_DATA</div>
     </div>
 
     <footer>
@@ -248,14 +282,17 @@
         let serverLevelData = null;
         let myUserRef = null;
 
-        // Генерация или сохранение постоянного никнейма в сессии
         if(!sessionStorage.getItem('aenigma_nick')) {
             sessionStorage.setItem('aenigma_nick', `OPERATOR_${Math.floor(100 + Math.random() * 900)}`);
         }
         const playerNickname = sessionStorage.getItem('aenigma_nick');
 
-        // Модули чата
-        let editMessageKey = null; // Хранит ключ редактируемого сообщения
+        // Чат и контекстное меню
+        let editMessageKey = null; 
+        let selectedMessageKey = null;
+        let selectedMessageText = "";
+        let longPressTimer = null;
+
         const chatModal = document.getElementById('chat-modal');
         const openChatBtn = document.getElementById('open-chat-btn');
         const closeChatBtn = document.getElementById('close-chat-btn');
@@ -263,6 +300,7 @@
         const chatInputEl = document.getElementById('chat-input');
         const chatSendBtnEl = document.getElementById('chat-send-btn');
         const chatTitleMode = document.getElementById('chat-title-mode');
+        const ctxMenu = document.getElementById('chat-context-menu');
 
         onValue(likesRef, (snap) => { 
             const serverLikes = snap.val() || 0;
@@ -508,16 +546,13 @@
         document.getElementById('share-btn').addEventListener('click', copyShareLink);
         document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') { if (document.getElementById('success-modal').classList.contains('active')) nextLevel(); else await submitAnswer(); } });
 
-        // === ИНИЦИАЛИЗАЦИЯ И УПРАВЛЕНИЕ ЧАТОМ ===
+        // === ЧАТ ЛОГИКА ===
         openChatBtn.addEventListener('click', () => {
             chatModal.classList.add('active');
             setTimeout(() => { chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight; chatInputEl.focus(); }, 50);
         });
-        closeChatBtn.addEventListener('click', () => {
-            chatModal.classList.remove('active');
-            resetEditMode();
-        });
-        chatModal.addEventListener('click', (e) => { if (e.target === chatModal) { chatModal.classList.remove('active'); resetEditMode(); } });
+        closeChatBtn.addEventListener('click', () => { chatModal.classList.remove('active'); resetEditMode(); closeContextMenu(); });
+        chatModal.addEventListener('click', (e) => { if (e.target === chatModal) { chatModal.classList.remove('active'); resetEditMode(); closeContextMenu(); } });
 
         function resetEditMode() {
             editMessageKey = null;
@@ -533,14 +568,12 @@
             if (!text || text.length > 150) return;
 
             if (editMessageKey) {
-                // Если мы в режиме редактирования
                 try {
                     const specificMsgRef = ref(db, `chat_messages/${editMessageKey}`);
                     await set(specificMsgRef, { user: playerNickname, message: text, level: currentLevelIndex + 1, timestamp: Date.now() });
                     resetEditMode();
                 } catch(err) { console.error("Edit failed:", err); }
             } else {
-                // Обычная отправка
                 try {
                     const newMessageRef = push(chatRef);
                     await set(newMessageRef, { user: playerNickname, message: text, level: currentLevelIndex + 1, timestamp: Date.now() });
@@ -552,28 +585,77 @@
         chatSendBtnEl.addEventListener('click', sendChatMessage);
         chatInputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.stopPropagation(); sendChatMessage(); } });
 
-        // Глобальный обработчик кликов для контекстного меню сообщений
-        window.handleMessageClick = function(key, currentText) {
-            const action = prompt("Type 'edit' to change message or 'del' to delete it:", "edit");
-            if (!action) return;
+        // Логика работы с кастомным меню терминала
+        window.openCustomContextMenu = function(e, key, text) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            selectedMessageKey = key;
+            selectedMessageText = text;
 
-            if (action.trim().toLowerCase() === 'edit') {
-                editMessageKey = key;
-                chatTitleMode.textContent = "// EDIT_MODE_ACTIVE";
-                chatTitleMode.style.color = "#ef4444";
-                chatInputEl.value = currentText;
-                chatInputEl.placeholder = "EDITING TRANSMISSION...";
-                chatSendBtnEl.textContent = "SAVE";
-                chatInputEl.focus();
-            } else if (action.trim().toLowerCase() === 'del') {
-                if (confirm("Disconnect this piece of data permanently?")) {
-                    const specificMsgRef = ref(db, `chat_messages/${key}`);
-                    remove(specificMsgRef).then(() => {
-                        if(editMessageKey === key) resetEditMode();
-                    }).catch(e => console.error(e));
-                }
-            }
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            ctxMenu.style.left = `${clientX}px`;
+            ctxMenu.style.top = `${clientY}px`;
+            ctxMenu.style.display = 'block';
+        };
+
+        function closeContextMenu() {
+            ctxMenu.style.display = 'none';
         }
+
+        document.addEventListener('click', closeContextMenu);
+        chatMessagesEl.addEventListener('scroll', closeContextMenu);
+
+        // Обработчики зажатия элементов контекстного меню
+        document.getElementById('ctx-edit-btn').addEventListener('click', () => {
+            if (!selectedMessageKey) return;
+            editMessageKey = selectedMessageKey;
+            chatTitleMode.textContent = "// EDIT_MODE_ACTIVE";
+            chatTitleMode.style.color = "#ef4444";
+            chatInputEl.value = selectedMessageText;
+            chatInputEl.placeholder = "EDITING TRANSMISSION...";
+            chatSendBtnEl.textContent = "SAVE";
+            chatInputEl.focus();
+            closeContextMenu();
+        });
+
+        document.getElementById('ctx-del-btn').addEventListener('click', async () => {
+            if (!selectedMessageKey) return;
+            try {
+                const specificMsgRef = ref(db, `chat_messages/${selectedMessageKey}`);
+                await remove(specificMsgRef);
+                if (editMessageKey === selectedMessageKey) resetEditMode();
+            } catch (e) { console.error(e); }
+            closeContextMenu();
+        });
+
+        // Функция-хелпер для навешивания Long Press тач-событий
+        window.bindLongPress = function(element, key, messageText) {
+            const startPress = (e) => {
+                longPressTimer = setTimeout(() => {
+                    window.openCustomContextMenu(e, key, messageText);
+                }, 500); 
+            };
+
+            const endPress = () => {
+                if (longPressTimer) clearTimeout(longPressTimer);
+            };
+
+            // Для мобилок (зажатие пальцем)
+            element.addEventListener('touchstart', startPress, { passive: false });
+            element.addEventListener('touchend', endPress);
+            element.addEventListener('touchmove', endPress);
+
+            // Для ПК (обычный правый клик или левый клик как альтернатива)
+            element.addEventListener('contextmenu', (e) => {
+                window.openCustomContextMenu(e, key, messageText);
+            });
+            element.addEventListener('mousedown', startPress);
+            element.addEventListener('mouseup', endPress);
+            element.addEventListener('mouseleave', endPress);
+        };
 
         const recentChatsQuery = query(chatRef, limitToLast(40));
         onValue(recentChatsQuery, (snap) => {
@@ -585,14 +667,18 @@
                     
                     const isMyMessage = (msg.user === playerNickname);
                     const clickableClass = isMyMessage ? "my-msg" : "";
-                    const clickAttr = isMyMessage ? `onclick="window.handleMessageClick('${key}', '${msg.message.replace(/'/g, "\\'")}')" title="Click to Edit/Delete"` : "";
 
                     msgEl.innerHTML = `
-                        <span class="${clickableClass}" ${clickAttr}>
-                            <span style="color: var(--accent); font-weight: bold;">[LVL ${msg.level}] ${msg.user}:</span> 
-                            <span style="color: #fff;">${escapeHtml(msg.message)}</span>
+                        <span class="${clickableClass}" data-key="${key}">
+                            <span style="color: var(--accent); font-weight: bold;">[LVL ${msg.level}] ${msg.user}:</span> <span style="color: #fff;">${escapeHtml(msg.message)}</span>
                         </span>
                     `;
+
+                    const clickableTarget = msgEl.querySelector('.my-msg');
+                    if (isMyMessage && clickableTarget) {
+                        window.bindLongPress(clickableTarget, key, msg.message);
+                    }
+
                     chatMessagesEl.appendChild(msgEl);
                 });
                 chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
