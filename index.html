@@ -97,6 +97,9 @@
         </div>
 
         <div id="game-screen" class="screen">
+            <!-- Счётчик перенесен в верхнюю часть карточки уровня -->
+            <div class="stats" style="margin-bottom: 20px; font-weight: bold; text-align: center; position: relative; z-index: 20;">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
+            
             <h1 id="level-title">LEVEL X</h1>
             <div id="level-desc" style="white-space: pre-line; line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; position: relative; z-index: 20;">Loading...</div>
             
@@ -130,8 +133,7 @@
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
-            <!-- Перенесенная статистика наверх модалки -->
-            <div class="stats" style="margin-bottom: 20px; font-weight: bold;">ON THIS LAYER: <strong id="modal-layer-online-count">0</strong></div>
+            <!-- Счётчик отсюда удален по вашей просьбе -->
             <h2>ACCESS GRANTED</h2>
             <p id="modal-message">...</p>
             <button class="btn" id="modal-continue-btn">CONTINUE</button>
@@ -140,7 +142,6 @@
 
     <footer>
         <div class="stats">TOTAL ONLINE: <strong id="online-count">0</strong></div>
-        <div class="stats">ON THIS LAYER: <strong id="layer-online-count">0</strong></div>
         <div class="stats">COMPLETED L24: <strong id="completed-24-count">0</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
         
@@ -230,14 +231,15 @@
         onValue(connectedRef, (snap) => {
             if (snap.val() === true) {
                 myUserRef = push(onlineUsersRef);
-                set(myUserRef, { active: true, level: -1 });
+                set(myUserRef, { active: true, level: currentLevelIndex });
                 onDisconnect(myUserRef).remove();
             }
         });
 
+        // Полностью исправленный обработчик счетчиков онлайна
         onValue(onlineUsersRef, (snap) => {
             try {
-                const data = typeof snap.val === 'function' ? snap.val() : snap;
+                const data = snap.val();
                 let totalOnline = 0;
                 let layerOnline = 0;
 
@@ -250,15 +252,16 @@
                             layerOnline++;
                         }
                     });
-                } 
+                } else {
+                    totalOnline = 1;
+                    layerOnline = 1;
+                }
                 document.getElementById('online-count').innerText = totalOnline;
                 document.getElementById('layer-online-count').innerText = layerOnline;
-                document.getElementById('modal-layer-online-count').innerText = layerOnline; // Синхронизация с модалкой
             } catch (err) {
                 console.error("Online formatting fail fallback engaged:", err);
                 document.getElementById('online-count').innerText = 1;
                 document.getElementById('layer-online-count').innerText = 1;
-                document.getElementById('modal-layer-online-count').innerText = 1;
             }
         });
 
@@ -361,7 +364,6 @@
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
 
-            // Тряска срабатывает ВСЕГДА при неверном ответе
             const el = document.getElementById('user-answer').style.display !== 'none' 
                 ? document.getElementById('user-answer') 
                 : document.getElementById('clicker-node');
