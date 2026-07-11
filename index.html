@@ -74,15 +74,16 @@
         .share-section { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .qr-frame { background: #fff; padding: 10px; border-radius: 4px; width: 170px; height: 170px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .qr-frame img { width: 150px; height: 150px; }
-        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        footer { margin-top: 40px; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px; }
         .like-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s; }
         .like-btn:hover { border-color: var(--accent); color: var(--accent); }
         
-        .donate-btn {
+        .donate-btn, .privacy-trigger-btn {
             background: none; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px;
             cursor: pointer; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; letter-spacing: 1px; display: inline-block;
         }
-        .donate-btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
+        .donate-btn:hover, .privacy-trigger-btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
+        .privacy-trigger-btn { border-color: var(--border); color: var(--text-muted); }
 
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
@@ -95,20 +96,21 @@
         }
         #open-chat-btn:hover svg { transform: scale(1.08); }
 
-        /* Чат лог */
+        /* Чат лог - Монолитное выравнивание */
         .chat-msg-row {
             word-wrap: break-word;
             word-break: break-all;
             white-space: pre-wrap;
-            line-height: 1.4;
+            line-height: 1.5;
             text-align: left;
             width: 100%;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             -webkit-user-select: none;
             user-select: none;
         }
         .my-msg, .other-msg {
-            display: block;
+            display: inline-block;
+            width: 100%;
             padding: 2px 4px;
             -webkit-user-select: none;
             user-select: none;
@@ -122,7 +124,7 @@
             background: rgba(188, 152, 85, 0.08);
         }
 
-        /* Кастомное контекстное меню терминала */
+        /* Контекстное меню терминала */
         .context-menu {
             display: none;
             position: fixed;
@@ -256,7 +258,7 @@
                 </span>
             </h2>
             
-            <div id="chat-messages" style="height: 280px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div id="chat-messages" style="height: 280px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
                 <!-- Логи -->
             </div>
             
@@ -264,6 +266,23 @@
                 <input type="text" id="chat-input" placeholder="ENTER TRANSMISSION..." autocomplete="off" style="margin-bottom: 0; padding: 12px; font-size: 0.9rem; text-align: left;">
                 <button id="chat-send-btn" class="btn" style="padding: 12px 25px; font-size: 0.85rem;">SEND</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Политики Конфиденциальности -->
+    <div id="privacy-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px; width: 95%; border-color: var(--border); box-shadow: 0 0 30px rgba(255,255,255,0.05); padding: 30px 25px;">
+            <h2 style="color: var(--text-main); font-size: 0.9rem; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between; letter-spacing: 1px;">
+                <span>// PRIVACY_POLICY.LOG</span>
+                <span id="close-privacy-btn" style="cursor: pointer; color: var(--text-muted);">[X]</span>
+            </h2>
+            <div style="height: 300px; overflow-y: auto; background: #000; border: 1px solid var(--border); padding: 15px; font-size: 0.8rem; color: #a1a1aa; text-align: left; line-height: 1.6; display: flex; flex-direction: column; gap: 15px;">
+                <div><strong>1. DATA MINING & COLLECTION</strong><br>Aenigma Project (hosted at https://aenigma-mark-2-3.onrender.com/) does not request, compile, or store personal identity matrices. Real names, surnames, and personal identifications are strictly filtered by automated sub-routines. Local node tracking uses zero-knowledge variables.</div>
+                <div><strong>2. LIVE SYNC NODES (CHAT & METRICS)</strong><br>Public data streams such as virtual handles (aliases) and standard solution timings are compiled strictly to align multi-user environments. Data structures are transmitted using stateless crypt-handshakes.</div>
+                <div><strong>3. RETENTION POLICY</strong><br>Session parameters, temporary tokens, and real-time environment syncs expire automatically upon connection termination or remote server cycles. No archival records are constructed.</div>
+                <div><strong>4. NODE TERMINATION</strong><br>Users hold total authority to purge local identification vectors at any step by modifying local application storage keys or re-routing network tunnels.</div>
+            </div>
+            <button class="btn secondary" id="privacy-ok-btn" style="margin-top: 20px; width: 100%; padding: 12px;">CLOSE_STREAM</button>
         </div>
     </div>
 
@@ -279,7 +298,8 @@
         <div class="stats">COMPLETED U24: <strong id="completed-24-count">0</strong></div>
         <button id="like-btn" class="like-btn">❤ SYSTEM_LIKES: <span id="likes-count">0</span></button>
         <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="donate-btn">☕ SUPPORT_SYSTEM</a>
-        <div class="stats" style="color: var(--text-muted); width: 100%; text-align: center; margin-top: 15px;">© 2026 Станислав А.</div>
+        <button id="privacy-trigger" class="privacy-trigger-btn">🔒 PRIVACY POLICY</button>
+        <div class="stats" style="color: var(--text-muted); width: 100%; text-align: center; margin-top: 15px;">© 2026 Stanislav A.</div>
     </footer>
 
     <script type="module">
@@ -288,7 +308,6 @@
 
         // Защита исходного кода от F12, контекстного меню и горячих клавиш плагиата
         document.addEventListener('contextmenu', (e) => {
-            // Разрешаем контекстное меню только внутри окна сообщений чата
             if (!e.target.closest('#chat-messages')) {
                 e.preventDefault();
             }
@@ -302,10 +321,48 @@
             }
         });
 
+        // Продвинутая ультра-жесткая фильтрация никнеймов: ФИО, спецсимволы и скрытые обходы
+        function containsRealIdentityName(text) {
+            const clean = text.trim();
+
+            // 1. ЗАЩИТА ОТ СПЕЦСИМВОЛОВ (включая #, &, $, @, и т.д.)
+            // Разрешаем только буквы всех языков (\p{L}), цифры (\p{N}), дефис и нижнее подчеркивание.
+            const validCharsPattern = /^[\p{L}\p{N}_\-]+$/u;
+            if (!validCharsPattern.test(clean.replace(/\s+/g, ''))) {
+                return true; 
+            }
+            
+            // 2. Проверка на стандартное разделение пробелами (Иван Иванов, John Doe, 王 伟)
+            const parts = clean.split(/\s+/);
+            if (parts.length >= 2) {
+                const capitalizedPattern = /^[\p{Lu}\p{Lt}]/u; 
+                let capitalizedCount = 0;
+                parts.forEach(p => {
+                    if (capitalizedPattern.test(p)) capitalizedCount++;
+                });
+                if (capitalizedCount >= 2) return true;
+                
+                const asianPattern = /^[\p{CjkUnifiedIdeographs}]+$/u;
+                let asianCount = 0;
+                parts.forEach(p => { if (asianPattern.test(p)) asianCount++; });
+                if (asianCount >= 2) return true;
+            }
+
+            // 3. Проверка на слитное написание без пробелов (CamelCase: ИванИванов, JohnDoe)
+            const camelCasePattern = /[\p{Ll}\p{Lm}\p{Lo}][\p{Lu}\p{Lt}]/u;
+            if (camelCasePattern.test(clean)) return true;
+
+            // 4. Защита от азиатских реальных имен без пробелов (2-4 иероглифа)
+            const pureAsianPattern = /^[\p{CjkUnifiedIdeographs}]{2,4}$/u;
+            if (pureAsianPattern.test(clean)) return true;
+
+            return false;
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
             authDomain: "aenigma-mark-23.firebaseapp.com",
-            databaseURL: "https://aenigma-mark-23-default-rtdb.europe-west1.firebasedatabase.app",
+            databaseURL: "https://aenigma-mark-2-3-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "aenigma-mark-23", storageBucket: "aenigma-mark-23.firebasestorage.app",
             messagingSenderId: "318632324088", appId: "1:318632324088:web:c9ff426bac663a64ca840d"
         };
@@ -350,6 +407,11 @@
         const chatMyNickDisplay = document.getElementById('chat-my-nick-display');
         const chatChangeNickBtn = document.getElementById('chat-change-nick-btn');
         const ctxMenu = document.getElementById('chat-context-menu');
+
+        const privacyModal = document.getElementById('privacy-modal');
+        const privacyTrigger = document.getElementById('privacy-trigger');
+        const closePrivacyBtn = document.getElementById('close-privacy-btn');
+        const privacyOkBtn = document.getElementById('privacy-ok-btn');
 
         chatMyNickDisplay.textContent = playerNickname;
 
@@ -597,6 +659,12 @@
         document.getElementById('share-btn').addEventListener('click', copyShareLink);
         document.getElementById('user-answer').addEventListener('keydown', async (e) => { if (e.key === 'Enter') { if (document.getElementById('success-modal').classList.contains('active')) nextLevel(); else await submitAnswer(); } });
 
+        // === ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ===
+        privacyTrigger.addEventListener('click', () => privacyModal.classList.add('active'));
+        closePrivacyBtn.addEventListener('click', () => privacyModal.classList.remove('active'));
+        privacyOkBtn.addEventListener('click', () => privacyModal.classList.remove('active'));
+        privacyModal.addEventListener('click', (e) => { if (e.target === privacyModal) privacyModal.classList.remove('active'); });
+
         // === ЧАТ ЛОГИКА ===
         openChatBtn.addEventListener('click', () => {
             chatModal.classList.add('active');
@@ -637,7 +705,9 @@
             if (!text || text.length > 150) return;
 
             if (isNicknameChangingMode) {
-                if (text.length < 3) {
+                // ЖЕСТКАЯ МОДЕРАЦИЯ НИКНЕЙМА
+                // Лимит длины (3-16) + Валидация ФИО и спецсимволов (#, &)
+                if (text.length < 3 || text.length > 16 || containsRealIdentityName(text)) {
                     chatInputEl.classList.add('shake');
                     setTimeout(() => chatInputEl.classList.remove('shake'), 400);
                     return;
@@ -711,10 +781,9 @@
             closeContextMenu();
         });
 
-        // Улучшенный хелпер зажатия (Long Press) и правого клика мыши на ПК/смартфонах
         window.bindLongPress = function(element, key, messageText) {
             const startPress = (e) => {
-                if (e.type === 'mousedown' && e.button !== 0) return; // Игнорируем не-левый клик в этом обработчике
+                if (e.type === 'mousedown' && e.button !== 0) return; 
                 if (longPressTimer) clearTimeout(longPressTimer);
                 longPressTimer = setTimeout(() => {
                     window.openCustomContextMenu(e, key, messageText);
@@ -725,17 +794,14 @@
                 if (longPressTimer) clearTimeout(longPressTimer);
             };
 
-            // Мобильные тач-события
             element.addEventListener('touchstart', startPress, { passive: false });
             element.addEventListener('touchend', endPress);
             element.addEventListener('touchmove', endPress);
 
-            // Стандартный правый клик (ПК)
             element.addEventListener('contextmenu', (e) => {
                 window.openCustomContextMenu(e, key, messageText);
             });
             
-            // Левый клик с удержанием (ПК)
             element.addEventListener('mousedown', startPress);
             element.addEventListener('mouseup', endPress);
             element.addEventListener('mouseleave', endPress);
@@ -756,10 +822,10 @@
                     const isMyMessage = (msg.user === playerNickname);
                     const clickableClass = isMyMessage ? "my-msg" : "other-msg";
 
+                    // Монолитная верстка строки: ник и текст находятся на единой линии в общем потоке
                     msgEl.innerHTML = `
                         <span class="${clickableClass}" data-key="${key}">
-                            <span style="color: var(--accent); font-weight: bold; display: inline-block; margin-bottom: -1px;">[LVL ${msg.level}] ${msg.user}:</span>
-                            <span style="color: #fff; padding-left: 2px;">${escapeHtml(msg.message)}</span>
+                            <span style="color: var(--accent); font-weight: bold; margin-bottom: -1px;">[LVL ${msg.level}] ${msg.user}:</span> <span style="color: #fff;">${escapeHtml(msg.message)}</span>
                         </span>
                     `;
 
