@@ -96,7 +96,7 @@
         .modal-card h2 { color: #22c55e; font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; }
         .modal-card p { margin-bottom: 25px; }
         
-        /* Улучшенная читаемость англоязычной модалки доната */
+        /* Readable Donate Modal Styles */
         .modal-card.donate-card { border-color: var(--donate-color); box-shadow: 0 0 40px rgba(34, 197, 94, 0.25); text-align: left; padding: 35px 30px; }
         .modal-card.donate-card h2 { color: var(--donate-color); text-align: center; margin-bottom: 25px; }
         .donate-method-block { margin-bottom: 25px; }
@@ -109,7 +109,6 @@
 
         .game-info-container { width: 100%; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         
-        /* Увеличен отступ футера для десктопа и сброс лишних паддингов снизу */
         footer { 
             width: 100%; max-width: 700px; border-top: 1px solid var(--border); margin-top: 60px; padding-top: 25px; padding-bottom: 25px; text-align: center; font-size: 0.8rem; color: var(--text-muted); 
             display: flex; flex-direction: column; align-items: center; gap: 20px; flex-shrink: 0;
@@ -148,13 +147,25 @@
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* Стили под мобильные устройства: разносим футер еще дальше */
+        /* Responsive spacing fixes for mobile layout */
         @media (max-width: 600px) {
-            body { padding: 20px 15px; justify-content: flex-start; }
-            main { margin: 20px 0 60px 0; padding: 40px 20px; } /* Добавлен отступ снизу у карточки */
+            body { 
+                padding: 20px 15px; 
+                justify-content: space-between; 
+                min-height: 90vh; 
+            }
+            main { 
+                margin: 20px 0 80px 0; 
+                padding: 40px 20px; 
+                flex-grow: 0;
+            }
             .header-stats-group { gap: 10px; flex-direction: column; align-items: flex-start; }
             .footer-btn-container { flex-direction: row; }
-            footer { margin-top: 40px; padding-top: 20px; padding-bottom: 30px; }
+            footer { 
+                margin-top: auto; 
+                padding-top: 10px; 
+                padding-bottom: 20px; 
+            }
         }
     </style>
 </head>
