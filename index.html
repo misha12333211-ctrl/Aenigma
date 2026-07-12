@@ -51,7 +51,7 @@
         
         main {
             width: 100%; max-width: 600px; background: var(--card-bg); border: 1px solid var(--border);
-            padding: 40px 40px 30px 40px; border-radius: 2px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; position: relative;
+            padding: 50px 40px; border-radius: 2px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; position: relative;
             margin: 40px 0; display: flex; flex-direction: column; justify-content: center;
         }
         .screen { display: none; }
@@ -85,7 +85,7 @@
         
         #void-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; display: none; touch-action: none; pointer-events: none; }
         
-        .hint-box { display: none; margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
+        .hint-box { display: none; margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: left; position: relative; z-index: 20; }
         .hint-box.visible { display: block; }
         
         .modal-overlay {
@@ -118,57 +118,76 @@
 
         .game-info-container { width: 100%; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         
-        /* Стили контейнера кнопок внутри карточки */
-        .card-footer-buttons {
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 15px; 
-            width: 100%;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            position: relative;
-            z-index: 25;
+        /* Новые стильные фиксированные кнопки по углам экрана */
+        .floating-btn {
+            position: fixed;
+            bottom: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
-        .action-btn { 
-            background: none; 
-            cursor: pointer; 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px;
-            font-size: 0.8rem; 
+        .floating-btn span {
+            font-size: 0.6rem;
+            margin-top: 2px;
             font-weight: bold;
-            padding: 10px 0;
-            width: 140px; 
-            letter-spacing: 1px;
-            transition: all 0.3s; 
-            text-decoration: none;
-            border-radius: 2px;
+            letter-spacing: 0.5px;
         }
         
-        .like-btn-style { border: 1px solid var(--accent); color: var(--accent); }
-        .like-btn-style:hover { background: rgba(188, 152, 85, 0.1); box-shadow: 0 0 15px rgba(188, 152, 85, 0.3); }
+        #like-btn {
+            left: 25px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+        #like-btn:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(188, 152, 85, 0.6);
+            transform: scale(1.05);
+        }
         
-        .donate-btn-style { border: 1px solid var(--donate-color); color: var(--donate-color); }
-        .donate-btn-style:hover { background: rgba(34, 197, 94, 0.1); box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
-
-        footer {
-            width: 100%; max-width: 600px; text-align: center; font-size: 0.8rem; color: var(--text-muted); padding: 10px 0; flex-shrink: 0;
+        #open-donate-btn {
+            right: 25px;
+            border: 1px solid var(--donate-color);
+            color: var(--donate-color);
+        }
+        #open-donate-btn:hover {
+            background: var(--donate-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+            transform: scale(1.05);
         }
 
+        footer { 
+            width: 100%; max-width: 600px; text-align: center; font-size: 0.75rem; color: var(--text-muted); padding: 20px 0; flex-shrink: 0; margin-top: auto;
+        }
+        
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* Идеальная мобильная адаптация */
+        /* Оптимизация под мобильные устройства */
         @media (max-width: 600px) {
             body { padding: 20px 15px; }
             header { width: 100%; }
-            main { margin: 25px 0; padding: 30px 20px 20px 20px; }
+            main { margin: 30px 0; padding: 40px 20px; }
             .header-stats-group { gap: 10px; flex-direction: column; align-items: flex-start; }
-            .card-footer-buttons { flex-direction: row; gap: 10px; }
-            .action-btn { width: 50%; }
+            .floating-btn {
+                bottom: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1rem;
+            }
+            #like-btn { left: 20px; }
+            #open-donate-btn { right: 20px; }
         }
     </style>
 </head>
@@ -223,12 +242,10 @@
                 <div class="qr-frame"><img id="qr-code-img" src="" alt="Loading QR..."></div>
             </div>
         </div>
-
-        <div class="card-footer-buttons">
-            <button id="like-btn" class="action-btn like-btn-style">❤ Like <strong id="likes-count">0</strong></button>
-            <button id="open-donate-btn" class="action-btn donate-btn-style">☕ Donate</button>
-        </div>
     </main>
+
+    <button id="like-btn" class="floating-btn">❤<span id="likes-count">0</span></button>
+    <button id="open-donate-btn" class="floating-btn">☕<span>USD</span></button>
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
