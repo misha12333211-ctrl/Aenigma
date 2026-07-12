@@ -15,6 +15,8 @@
             --error: #7f1d1d;
             --success: #15803d;
             --donate-color: #22c55e;
+            /* Новый яркий бирюзовый цвет для крипто-кнопок */
+            --crypto-accent: #06b6d4; 
         }
         * { 
             box-sizing: border-box; 
@@ -106,6 +108,16 @@
             -webkit-user-select: text; user-select: text; letter-spacing: 0.5px;
         }
         .donate-notice { color: #f59e0b; font-size: 0.75rem; border-left: 2px solid #f59e0b; padding-left: 12px; margin-top: 20px; line-height: 1.5; }
+
+        /* Стиль для кастомной яркой кнопки копирования адреса */
+        .copy-btn-style {
+            border: 1px solid var(--crypto-accent) !important;
+            color: var(--crypto-accent) !important;
+        }
+        .copy-btn-style:hover {
+            background: rgba(6, 182, 212, 0.1) !important;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3) !important;
+        }
 
         .game-info-container { width: 100%; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         
@@ -237,13 +249,13 @@
             
             <div class="donate-method-block">
                 <div class="stats">[METHOD 01] SBERBANK (RU):</div>
-                <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="btn" style="display: block; text-align: center; padding: 12px; font-size: 0.8rem; text-decoration: none; border-color: var(--donate-color); color: var(--donate-color); margin-top: 8px;">Open SberTips $</a>
+                <a href="https://messenger.online.sberbank.ru/sl/kzEsbRgBZb6cf7Upy" target="_blank" class="btn" style="display: block; text-align: center; padding: 12px; font-size: 0.8rem; text-decoration: none; border-color: var(--donate-color); color: var(--donate-color); margin-top: 8px;">Open SberBank ₽</a>
             </div>
             
             <div class="donate-method-block">
                 <div class="stats">[METHOD 02] CRYPTO WALLET (TON / USDT):</div>
                 <div class="wallet-box" id="crypto-address">UQB4NY_1ula9p2YJpM0kHPEjbJOmOUK1JNwYUNu9_T2TlAbt</div>
-                <button class="btn secondary" id="copy-wallet-btn" style="width: 100%; padding: 10px; font-size: 0.8rem; letter-spacing: 1px;">COPY WALLET ADDRESS</button>
+                <button class="btn copy-btn-style" id="copy-wallet-btn" style="width: 100%; padding: 10px; font-size: 0.8rem; letter-spacing: 1px;">COPY WALLET ADDRESS [ $ / € / 📋 ]</button>
             </div>
             
             <div class="donate-notice">
