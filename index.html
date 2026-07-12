@@ -118,14 +118,17 @@
 
         .game-info-container { width: 100%; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         
-        /* Новые стильные фиксированные кнопки по углам экрана */
-        .floating-btn {
+        /* Фиксированная кнопка лайка в правом нижнем углу */
+        .floating-like-btn {
             position: fixed;
             bottom: 25px;
+            right: 25px;
             width: 55px;
             height: 55px;
             border-radius: 50%;
             background: var(--card-bg);
+            border: 1px solid var(--accent);
+            color: var(--accent);
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -136,58 +139,75 @@
             font-size: 1.1rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
-        .floating-btn span {
+        .floating-like-btn span {
             font-size: 0.6rem;
             margin-top: 2px;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
-        
-        #like-btn {
-            left: 25px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-        }
-        #like-btn:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-            box-shadow: 0 0 20px rgba(188, 152, 85, 0.6);
+        .floating-like-btn:hover {
+            background: rgba(188, 152, 85, 0.1);
+            box-shadow: 0 0 20px rgba(188, 152, 85, 0.4);
             transform: scale(1.05);
         }
         
-        #open-donate-btn {
-            right: 25px;
-            border: 1px solid var(--donate-color);
-            color: var(--donate-color);
+        /* Состояние кнопки ПОСЛЕ того, как лайк был поставлен */
+        .floating-like-btn.liked {
+            background: var(--accent) !important;
+            color: var(--bg-color) !important;
+            box-shadow: 0 0 25px rgba(188, 152, 85, 0.6) !important;
         }
-        #open-donate-btn:hover {
-            background: var(--donate-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
-            transform: scale(1.05);
+        .floating-like-btn.liked span {
+            color: var(--bg-color) !important;
         }
 
+        /* Текстовый футер с донатом */
         footer { 
-            width: 100%; max-width: 600px; text-align: center; font-size: 0.75rem; color: var(--text-muted); padding: 20px 0; flex-shrink: 0; margin-top: auto;
+            width: 100%; max-width: 600px; border-top: 1px solid var(--border); margin-top: auto; padding-top: 25px; padding-bottom: 25px; text-align: center; font-size: 0.8rem; color: var(--text-muted); 
+            display: flex; flex-direction: column; align-items: center; gap: 20px; flex-shrink: 0;
         }
-        
+        .footer-btn-container {
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%;
+        }
+        .action-btn { 
+            background: none; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            font-size: 0.85rem; 
+            font-weight: bold;
+            padding: 12px 0;
+            width: 160px; 
+            letter-spacing: 1px;
+            transition: all 0.3s; 
+            text-decoration: none;
+            border-radius: 2px;
+        }
+        .donate-btn-style { border: 1px solid var(--donate-color); color: var(--donate-color); }
+        .donate-btn-style:hover { background: rgba(34, 197, 94, 0.1); box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
+
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* Оптимизация под мобильные устройства */
+        /* Мобильная адаптация */
         @media (max-width: 600px) {
             body { padding: 20px 15px; }
             header { width: 100%; }
             main { margin: 30px 0; padding: 40px 20px; }
             .header-stats-group { gap: 10px; flex-direction: column; align-items: flex-start; }
-            .floating-btn {
+            .floating-like-btn {
                 bottom: 20px;
+                right: 20px;
                 width: 50px;
                 height: 50px;
                 font-size: 1rem;
             }
-            #like-btn { left: 20px; }
-            #open-donate-btn { right: 20px; }
+            footer { padding-top: 15px; padding-bottom: 25px; }
         }
     </style>
 </head>
@@ -244,8 +264,7 @@
         </div>
     </main>
 
-    <button id="like-btn" class="floating-btn">❤<span id="likes-count">0</span></button>
-    <button id="open-donate-btn" class="floating-btn">☕<span>USD</span></button>
+    <button id="like-btn" class="floating-like-btn">❤<span id="likes-count">0</span></button>
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
@@ -282,6 +301,9 @@
     </div>
 
     <footer>
+        <div class="footer-btn-container">
+            <button id="open-donate-btn" class="action-btn donate-btn-style">☕ Donate</button>
+        </div>
         <div>&copy; 2026 Stanislav A.</div>
     </footer>
 
@@ -334,8 +356,8 @@
             try {
                 await runTransaction(likesRef, (currentValue) => (currentValue || 0) + 1);
                 localStorage.setItem('aenigma_liked', 'true');
-                likeBtnEl.style.color = 'var(--accent)';
-                likeBtnEl.style.borderColor = 'var(--accent)';
+                // Добавляем класс подсветки при клике
+                likeBtnEl.classList.add('liked');
             } catch (err) { 
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
@@ -344,9 +366,9 @@
             }
         });
 
+        // Проверяем статус при загрузке страницы, чтобы кнопка оставалась золотой
         if (localStorage.getItem('aenigma_liked')) {
-            document.getElementById('like-btn').style.color = 'var(--accent)';
-            document.getElementById('like-btn').style.borderColor = 'var(--accent)';
+            document.getElementById('like-btn').classList.add('liked');
         }
 
         const donateModal = document.getElementById('donate-modal');
