@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AENIGMA MARK 2.3</title>
+    <title>AENIGMA Mark 2.3 — 24-Level Puzzle Challenge</title>
+    
+    <!-- SEO & Indexing -->
+    <meta name="description" content="AENIGMA Mark 2.3 — a 24-level puzzle game featuring logic, ciphers and interactive challenges.">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph (Social Media Sharing) -->
+    <meta property="og:title" content="AENIGMA Mark 2.3">
+    <meta property="og:description" content="24-level puzzle challenge.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aenigma-mark-2-3.onrender.com/">
+    <meta property="og:image" content="https://aenigma-mark-2-3.onrender.com/preview.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+
     <style>
         :root {
             --bg-color: #050507;
@@ -212,6 +228,16 @@
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
+        /* Стили ссылок внутри политики конфиденциальности */
+        .privacy-inner-link {
+            color: var(--accent);
+            text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+        .privacy-inner-link:hover {
+            opacity: 0.8;
+        }
+
         /* Мобильная адаптация */
         @media (max-width: 600px) {
             body { padding: 20px 15px; }
@@ -317,16 +343,22 @@
     <div id="privacy-modal" class="modal-overlay">
         <div class="modal-card donate-card" style="max-width: 500px; text-align: left;">
             <h2 style="color: var(--accent); text-align: center; margin-bottom: 20px;">PRIVACY POLICY</h2>
-            <div style="font-size: 0.8rem; line-height: 1.6; max-height: 300px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; color: var(--text-main);">
+            <div style="font-size: 0.8rem; line-height: 1.6; max-height: 320px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; color: var(--text-main);">
                 <p style="margin-bottom: 12px; text-align: left; color: var(--text-muted); font-size: 0.75rem;">Effective Date: July 13, 2026</p>
-                <p style="margin-bottom: 15px; text-align: left;"><strong>URL:</strong> <span style="color: var(--accent); user-select: text;">https://aenigma-mark-2-3.onrender.com/</span></p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>URL:</strong> <span style="color: var(--accent); user-select: text; font-weight: bold;">https://aenigma-mark-2-3.onrender.com/</span></p>
                 
                 <p style="margin-bottom: 15px; text-align: left;"><strong>1. Personal Data:</strong> This website does not request, collect, or store personally identifiable information (PII) such as names, email addresses, or account credentials.</p>
                 <p style="margin-bottom: 15px; text-align: left;"><strong>2. Infrastructure & Analytics:</strong> We use Google Firebase to handle live module features (active online synchronization, global counters). Google Firebase may process technical information, including IP addresses and connection metadata, as required to provide real-time synchronization.</p>
-                <p style="margin-bottom: 15px; text-align: left;"><strong>3. Blockchain Contributions:</strong> Cryptocurrency contributions (TON / USDT) are processed transparently via the public decentralized blockchain ledger. Your public wallet address and transaction history are visible on the network. We do not correlate your public wallet metadata with your local gameplay or personal identity.</p>
-                <p style="margin-bottom: 15px; text-align: left;"><strong>4. Local Storage:</strong> The module utilizes standard browser Local Storage exclusively to remember your localized interaction states, such as saving game progress and preventing duplicate likes from the same browser.</p>
-                <p style="margin-bottom: 15px; text-align: left;"><strong>5. Third-Party Services:</strong> This website relies on Google Firebase and Render to operate core functionality. These providers may process technical data under their own privacy policies.</p>
-                <p style="margin-bottom: 15px; text-align: left;"><strong>6. Contact:</strong> If you have questions regarding this Privacy Policy, you may contact the project owner at <span style="color: var(--accent); user-select: text;">stasaleskin80@gmail.com</span>.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>3. Cookies:</strong> This website does not use cookies for advertising or user tracking. Some third-party services (such as Google Firebase) may use cookies or similar technologies as required for their operation.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>4. Blockchain Contributions:</strong> Cryptocurrency contributions (TON / USDT) are processed transparently via the public decentralized blockchain ledger. Your public wallet address and transaction history are visible on the network. We do not correlate your public wallet metadata with your local gameplay or personal identity.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>5. Local Storage:</strong> The module utilizes standard browser Local Storage exclusively to remember your localized interaction states, such as saving game progress and preventing duplicate likes from the same browser.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>6. Third-Party Services:</strong> Google Firebase provides real-time database functionality. Render hosts the application infrastructure. These providers may process technical information necessary to deliver their services in accordance with their own privacy policies. You can review them here:<br>
+                &bull; <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" class="privacy-inner-link">Google Privacy Policy</a><br>
+                &bull; <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener" class="privacy-inner-link">Firebase Privacy and Security</a><br>
+                &bull; <a href="https://render.com/privacy" target="_blank" rel="noopener" class="privacy-inner-link">Render Privacy Policy</a></p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>7. User Rights:</strong> Since this website does not collect personal information directly, there is generally no personal data stored that can be corrected or deleted upon request.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>8. Policy Changes:</strong> We may update this Privacy Policy from time to time. Any changes will be published on this page together with an updated Effective Date.</p>
+                <p style="margin-bottom: 15px; text-align: left;"><strong>9. Contact:</strong> If you have questions regarding this Privacy Policy, you may contact the project owner at <span style="color: var(--accent); user-select: text; font-weight: bold;">stasaleskin80@gmail.com</span>.</p>
             </div>
             <div style="text-align: center;">
                 <button class="btn" id="close-privacy-btn" style="border-color: var(--text-muted); color: var(--text-muted); padding: 10px 30px; font-size: 0.8rem;">CLOSE</button>
@@ -351,8 +383,8 @@
         const firebaseConfig = {
             apiKey: "AIzaSyDkFTLYk0Jd02thV6DLEzB8hJF-B9IRx68",
             authDomain: "aenigma-mark-23.firebaseapp.com",
-            databaseURL: "https://aenigma-mark-23-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "aenigma-mark-23", storageBucket: "aenigma-mark-23.firebasestorage.app",
+            databaseURL: "https://aenigma-mark-2-3-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "aenigma-mark-2-3", storageBucket: "aenigma-mark-2-3.firebasestorage.app",
             messagingSenderId: "318632324088", appId: "1:318632324088:web:c9ff426bac663a64ca840d"
         };
 
