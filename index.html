@@ -33,6 +33,20 @@
             --donate-color: #22c55e;
             --crypto-accent: #06b6d4; 
         }
+        
+        /* Мемная неоновая тема, активируемая через JS */
+        body.meme-mode-active {
+            --accent: #ff007f; /* Ярко-розовый */
+            --bg-color: #0d001a; /* Темно-фиолетовый */
+            --card-bg: #1a0033;
+            --border: #ff007f;
+            --text-main: #00ffff; /* Неоново-бирюзовый */
+            --text-muted: #8b5cf6;
+            --success: #22c55e;
+            background-image: radial-gradient(circle, #2a004d 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -46,6 +60,7 @@
             background-color: var(--bg-color); color: var(--text-main); min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px;
             overflow-x: hidden; overflow-y: auto; position: relative;
+            transition: all 0.5s ease;
         }
 
         header { 
@@ -73,6 +88,16 @@
         .screen { display: none; }
         .screen.active { display: block; }
         h1 { font-size: 1.6rem; letter-spacing: 5px; margin-bottom: 30px; color: #fff; position: relative; z-index: 20; }
+        
+        /* Секретная кликабельная надпись */
+        #secret-meme-trigger {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #secret-meme-trigger:active {
+            transform: scale(0.95);
+        }
+
         p { color: var(--text-main); line-height: 1.8; margin-bottom: 35px; font-size: 0.95rem; text-align: justify; position: relative; z-index: 20; }
         input[type="text"] {
             width: 100%; background: var(--bg-color); border: 1px solid var(--border); padding: 15px; color: #fff;
@@ -88,6 +113,8 @@
             touch-action: manipulation;
         }
         .btn:hover { background: var(--accent); color: var(--bg-color); box-shadow: 0 0 15px rgba(188, 152, 85, 0.4); }
+        body.meme-mode-active .btn:hover { box-shadow: 0 0 15px rgba(255, 0, 127, 0.6); }
+        
         .btn:disabled { border-color: var(--text-muted); color: var(--text-muted); cursor: not-allowed; box-shadow: none; background: none; }
         .btn.secondary { border-color: var(--text-muted); color: var(--text-muted); }
         .btn.secondary:hover { background: var(--text-muted); color: var(--bg-color); }
@@ -269,8 +296,8 @@
         <canvas id="void-canvas"></canvas>
 
         <div id="start-screen" class="screen active">
-            <h1>AENIGMA <span style="color: var(--accent);">[Mark 2.3]</span></h1>
-            <p>Welcome to the 24-level module. Levels 1-15 contain logical riddles. Levels 16-24 enter the "HELL SECTOR" -- ancient ciphers, raw interactive action, zero hints, minimal text. Neural networks cannot parse this sector. Good luck.</p>
+            <h1 id="secret-meme-trigger">AENIGMA <span style="color: var(--accent);" id="version-badge">[Mark 2.3]</span></h1>
+            <p id="start-desc">Welcome to the 24-level module. Levels 1-15 contain logical riddles. Levels 16-24 enter the "HELL SECTOR" -- ancient ciphers, raw interactive action, zero hints, minimal text. Neural networks cannot parse this sector. Good luck.</p>
             <button class="btn" onclick="window.startGame()">INITIALIZE</button>
         </div>
 
@@ -290,20 +317,20 @@
             </div>
             
             <div id="hint-box" class="hint-box">
-                <strong>ANALYSIS MODULE:</strong> <span id="level-hint">...</span>
+                <strong id="hint-module-title">ANALYSIS MODULE:</strong> <span id="level-hint">...</span>
             </div>
         </div>
 
         <div id="victory-screen" class="screen">
-            <h1>GOD MODE ENGAGED</h1>
-            <p>Unbelievable. You conquered all 24 layers, bypassing the anti-AI sector. You have proven absolute cognitive dominance over machine logic.</p>
+            <h1 id="victory-title">GOD MODE ENGAGED</h1>
+            <p id="victory-desc">Unbelievable. You conquered all 24 layers, bypassing the anti-AI sector. You have proven absolute cognitive dominance over machine logic.</p>
             <div class="btn-container">
                 <button class="btn" id="restart-btn">RESTART MODULE</button>
                 <button class="btn secondary" id="share-btn">COPY SHARE LINK</button>
             </div>
-            <div class="share-section">
+            <div class="share-section" style="margin-top: 30px;">
                 <div class="stats">CHALLENGE YOUR FRIENDS:</div>
-                <div class="qr-frame"><img id="qr-code-img" src="" alt="Loading QR..."></div>
+                <div class="qr-frame" style="margin-top: 15px;"><img id="qr-code-img" src="" alt="Loading QR..."></div>
             </div>
         </div>
     </main>
@@ -312,7 +339,7 @@
 
     <div id="success-modal" class="modal-overlay">
         <div class="modal-card">
-            <h2>ACCESS GRANTED</h2>
+            <h2 id="success-modal-title">ACCESS GRANTED</h2>
             <p id="modal-message">...</p>
             <button class="btn" id="modal-continue-btn">CONTINUE</button>
         </div>
@@ -339,7 +366,6 @@
         </div>
     </div>
 
-    <!-- Обновленное модальное окно политики конфиденциальности -->
     <div id="privacy-modal" class="modal-overlay">
         <div class="modal-card donate-card" style="max-width: 500px; text-align: left;">
             <h2 style="color: var(--accent); text-align: center; margin-bottom: 20px;">PRIVACY POLICY</h2>
@@ -409,6 +435,54 @@
         let serverLevelData = null;
         let myUserRef = null;
 
+        // --- МЕМ-ДВИЖОК И АУДИО ---
+        let isMemeMode = false;
+        let triggerClicks = 0;
+
+        // Прямые ссылки на звуковые эффекты Майкла Джексона (свободные форматы)
+        const sounds = {
+            heeHee: new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg"), // Будет подменено вашим HEEHEE
+            ow: new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"), 
+            beatboxClick: new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg"),
+            bgMusic: new Audio("https://ia800605.us.archive.org/8/items/8-bitBeatItMichaelJacksonCover/8-bit%20Beat%20It%20-%20Michael%20Jackson%20Cover.mp3") // Легендарный 8-bit MJ
+        };
+        sounds.bgMusic.loop = true;
+        sounds.bgMusic.volume = 0.25;
+
+        // Кастомные надежные MP3 ссылки для звуков Джексона (для мгновенного орного эффекта)
+        const mjHeeHeeUrl = "https://www.myinstants.com/media/sounds/michael-jackson-hee-hee.mp3";
+        const mjOwUrl = "https://www.myinstants.com/media/sounds/mj-ow.mp3";
+        
+        // Заменяем на реальные крики MJ
+        sounds.heeHee.src = mjHeeHeeUrl;
+        sounds.ow.src = mjOwUrl;
+
+        // Клик-триггер для активации MEME MODE
+        document.getElementById('secret-meme-trigger').addEventListener('click', () => {
+            triggerClicks++;
+            if (triggerClicks === 5) {
+                activateMemeMode();
+            }
+        });
+
+        function activateMemeMode() {
+            isMemeMode = true;
+            document.body.classList.add('meme-mode-active');
+            sounds.heeHee.play();
+            
+            // Визуальные изменения интерфейса
+            document.getElementById('version-badge').innerHTML = "[MEME EDITION]";
+            document.getElementById('version-badge').style.color = "#00ffff";
+            document.getElementById('start-desc').innerText = "ВНИМАНИЕ! Вы активировали режим ПОСТИРОНИИ. Здесь Майкл Джексон кричит на каждый чих, мемы ломают логику, а боты плачут в стороне. Готовы войти в КРИНЖ-СЕКТОР?";
+            document.getElementById('hint-module-title').innerText = "МЕМНЫЙ СОВЕТНИК:";
+            document.getElementById('success-modal-title').innerText = "ХОРОШ, МЕГАХАРОШ!";
+            document.getElementById('victory-title').innerText = "ГИГАЧАД СТАТУС ПОЛУЧЕН";
+            document.getElementById('victory-desc').innerText = "Вы победили эту игру и доказали, что ваше чувство юмора превосходит любые алгоритмы кремниевых добряков. Шаблон разорван!";
+            
+            // Запуск фоновой музыки
+            sounds.bgMusic.play().catch(e => console.log("Music play blocked by browser. Will start on interaction."));
+        }
+
         onValue(likesRef, (snap) => { 
             document.getElementById('likes-count').innerText = snap.val() || 0; 
         });
@@ -429,6 +503,7 @@
                 await runTransaction(likesRef, (currentValue) => (currentValue || 0) + 1);
                 localStorage.setItem('aenigma_liked', 'true');
                 likeBtnEl.classList.add('liked');
+                if (isMemeMode) sounds.heeHee.play();
             } catch (err) { 
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
@@ -496,6 +571,8 @@
         });
 
         window.startGame = function() {
+            // Если браузер заблокировал автовоспроизведение, запускаем по кнопке старта
+            if (isMemeMode) sounds.bgMusic.play().catch(() => {});
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             loadLevelFromServer();
@@ -504,7 +581,8 @@
         async function loadLevelFromServer() {
             if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
             try {
-                const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}`);
+                // Передаем флаг memeMode на сервер
+                const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}&memeMode=${isMemeMode}`);
                 const data = await response.json();
                 if (data.finished) { showVictoryScreen(); return; }
                 serverLevelData = data;
@@ -575,7 +653,12 @@
                 const response = await fetch(`${API_URL}/checkAnswer`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index: currentLevelIndex, answer: answerString, rawData: rawData })
+                    body: JSON.stringify({ 
+                        index: currentLevelIndex, 
+                        answer: answerString, 
+                        rawData: rawData,
+                        memeMode: isMemeMode // Говорим серверу проверять мемы
+                    })
                 });
                 const result = await response.json();
                 if (result.success) triggerSuccess(); else triggerFail();
@@ -585,13 +668,23 @@
         }
 
         function triggerSuccess() {
-            document.getElementById('modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
+            if (isMemeMode) {
+                sounds.heeHee.play();
+                document.getElementById('modal-message').textContent = `АУФ! Слой ${currentLevelIndex + 1} разорван в клочья. Двигаемся дальше!`;
+            } else {
+                document.getElementById('modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
+            }
             document.getElementById('success-modal').classList.add('active');
         }
 
         function triggerFail() {
             const el = document.getElementById('user-answer').style.display !== 'none' ? document.getElementById('user-answer') : document.getElementById('clicker-node');
             el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
+            
+            if (isMemeMode) {
+                sounds.ow.play(); // Крик боли Майкла при ошибке!
+            }
+
             wrongAttempts++; 
             document.getElementById('attempt-counter').textContent = wrongAttempts;
             if (wrongAttempts >= 10 && currentLevelIndex < 15) document.getElementById('hint-box').classList.add('visible');
@@ -621,7 +714,14 @@
             clickPattern = [];
             const clickBtn = document.getElementById('clicker-node');
             let lastClickTime = 0;
-            clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { e.preventDefault(); lastClickTime = Date.now(); };
+            clickBtn.onmousedown = clickBtn.ontouchstart = (e) => { 
+                e.preventDefault(); 
+                lastClickTime = Date.now(); 
+                if (isMemeMode) {
+                    sounds.beatboxClick.currentTime = 0;
+                    sounds.beatboxClick.play();
+                }
+            };
             clickBtn.onmouseup = clickBtn.ontouchend = async (e) => {
                 e.preventDefault();
                 const duration = Date.now() - lastClickTime;
@@ -642,6 +742,14 @@
             canvas.height = canvas.parentElement.clientHeight;
             ctx.clearRect(0,0, canvas.width, canvas.height);
 
+            // Если мем-режим, рисуем на бэкграунде канваса контур Рикролла
+            if (isMemeMode) {
+                ctx.fillStyle = "rgba(255, 0, 127, 0.07)";
+                ctx.font = "bold 14px 'Courier New'";
+                ctx.textAlign = "center";
+                ctx.fillText("⭐ DRAW A HAPPY FACE FOR RICKY ⭐", canvas.width / 2, canvas.height / 2 - 20);
+            }
+
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
             canvas.onmouseup = canvas.ontouchend = async (e) => { 
                 e.preventDefault(); drawing = false; 
@@ -654,7 +762,9 @@
                 const clientY = e.clientY || (e.touches && e.touches[0].clientY);
                 const pt = { x: Math.round(clientX - rect.left), y: Math.round(clientY - rect.top) };
                 strokePoints.push(pt);
-                ctx.fillStyle = '#bc9855'; ctx.fillRect(pt.x, pt.y, 4, 4);
+                
+                ctx.fillStyle = isMemeMode ? '#00ffff' : '#bc9855'; 
+                ctx.fillRect(pt.x, pt.y, 4, 4);
             };
         }
 
@@ -663,11 +773,14 @@
             const ctx = canvas.getContext('2d');
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight; 
-            const letters = ["V", "O", "R", "T", "E", "X"];
+            
+            // Мемные слова для спектрального генератора
+            const letters = isMemeMode ? ["C", "R", "I", "N", "G", "E"] : ["V", "O", "R", "T", "E", "X"];
 
             function processFrame() {
                 if (currentLevelIndex < 15) return;
-                ctx.fillStyle = 'rgba(12, 12, 14, 0.2)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = isMemeMode ? 'rgba(26, 0, 51, 0.2)' : 'rgba(12, 12, 14, 0.2)'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 const time = performance.now();
 
                 if (currentLevelIndex === 22) {
@@ -682,17 +795,20 @@
                     for (let i = 0; i < totalLetters; i++) {
                         const x = startX + i * (rectWidth + gap);
                         if (i === currentLetterIdx) {
-                            ctx.strokeStyle = '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, rectWidth, rectHeight);
-                            for (let s = 0; s < 40; s++) { ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.7})`; ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2); }
+                            ctx.strokeStyle = isMemeMode ? '#00ffff' : '#bc9855'; ctx.lineWidth = 2; ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                            for (let s = 0; s < 40; s++) { 
+                                ctx.fillStyle = isMemeMode ? `rgba(0, 255, 255, ${Math.random() * 0.7})` : `rgba(188, 152, 85, ${Math.random() * 0.7})`; 
+                                ctx.fillRect(x + Math.random() * rectWidth, startY + Math.random() * rectHeight, 2, 2); 
+                            }
                             ctx.fillStyle = '#fff'; ctx.font = 'bold 28px "Courier New"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                             ctx.fillText(letters[i], x + (rectWidth / 2) + (Math.random() * 4 - 2), startY + (rectHeight / 2));
                         } else {
-                            ctx.strokeStyle = '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, rectWidth, rectHeight);
+                            ctx.strokeStyle = isMemeMode ? '#2a004d' : '#18181b'; ctx.lineWidth = 1; ctx.strokeRect(x, startY, rectWidth, rectHeight);
                         }
                     }
                 } else {
                     for (let i = 0; i < 350; i++) {
-                        ctx.fillStyle = `rgba(188, 152, 85, ${Math.random() * 0.12})`;
+                        ctx.fillStyle = isMemeMode ? `rgba(0, 255, 255, ${Math.random() * 0.12})` : `rgba(188, 152, 85, ${Math.random() * 0.12})`;
                         ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 1.5, Math.random() * 1.5);
                     }
                 }
@@ -702,7 +818,10 @@
         }
 
         function getCleanUrl() { return window.location.href.startsWith('file://') ? 'https://google.com' : window.location.href; }
-        function generateQR() { try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=bc9855&bgcolor=0c0c0e`; } catch(e){} }
+        function generateQR() { 
+            const color = isMemeMode ? "ff007f" : "bc9855";
+            try { document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(getCleanUrl())}&color=${color}&bgcolor=0c0c0e`; } catch(e){} 
+        }
         function copyShareLink() {
             const u = window.location.href;
             if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(u).then(() => alert("Game link copied!")).catch(() => fallbackCopy(u)); } else fallbackCopy(u);
@@ -715,6 +834,12 @@
             document.getElementById('victory-screen').classList.remove('active'); 
             document.getElementById('start-screen').classList.add('active'); 
             window.updateMyLevelStatus(-1);
+            if (isMemeMode) sounds.bgMusic.pause();
+            isMemeMode = false;
+            triggerClicks = 0;
+            document.body.classList.remove('meme-mode-active');
+            document.getElementById('version-badge').innerHTML = "[Mark 2.3]";
+            document.getElementById('version-badge').style.color = "var(--accent)";
         }
 
         document.getElementById('sub-btn').addEventListener('click', submitAnswer);
