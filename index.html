@@ -34,13 +34,13 @@
             --crypto-accent: #06b6d4; 
         }
         
-        /* Мемная неоновая тема, активируемая через JS */
+        /* Neon Meme Theme triggered via JS */
         body.meme-mode-active {
-            --accent: #ff007f; /* Ярко-розовый */
-            --bg-color: #0d001a; /* Темно-фиолетовый */
+            --accent: #ff007f; /* Hot Pink */
+            --bg-color: #0d001a; /* Dark Purple */
             --card-bg: #1a0033;
             --border: #ff007f;
-            --text-main: #00ffff; /* Неоново-бирюзовый */
+            --text-main: #00ffff; /* Neon Cyan */
             --text-muted: #8b5cf6;
             --success: #22c55e;
             background-image: radial-gradient(circle, #2a004d 1px, transparent 1px);
@@ -89,7 +89,7 @@
         .screen.active { display: block; }
         h1 { font-size: 1.6rem; letter-spacing: 5px; margin-bottom: 30px; color: #fff; position: relative; z-index: 20; }
         
-        /* Секретная кликабельная надпись */
+        /* Secret Easter Egg Clickable Title */
         #secret-meme-trigger {
             cursor: pointer;
             transition: transform 0.2s;
@@ -161,7 +161,7 @@
 
         .game-info-container { width: 100%; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         
-        /* Фиксированная кнопка лайка */
+        /* Floating Like Button */
         .floating-like-btn {
             position: fixed;
             bottom: 25px;
@@ -209,7 +209,7 @@
             color: #fff !important;
         }
 
-        /* Текстовый футер */
+        /* Footer */
         footer { 
             width: 100%; max-width: 600px; border-top: 1px solid var(--border); margin-top: auto; padding-top: 25px; padding-bottom: 25px; text-align: center; font-size: 0.8rem; color: var(--text-muted); 
             display: flex; flex-direction: column; align-items: center; gap: 15px; flex-shrink: 0;
@@ -239,7 +239,6 @@
         .donate-btn-style { border: 1px solid var(--border); color: var(--text-muted); }
         .donate-btn-style:hover { border-color: var(--donate-color); color: var(--donate-color); background: rgba(34, 197, 94, 0.05); box-shadow: 0 0 12px rgba(34, 197, 94, 0.2); }
 
-        /* Текстовая серая ссылка для политики */
         .privacy-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -255,7 +254,6 @@
         .shake { animation: shake 0.4s ease-in-out; border-color: var(--error) !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* Стили ссылок внутри политики конфиденциальности */
         .privacy-inner-link {
             color: var(--accent);
             text-decoration: underline;
@@ -265,7 +263,7 @@
             opacity: 0.8;
         }
 
-        /* Мобильная адаптация */
+        /* Mobile Adaptation */
         @media (max-width: 600px) {
             body { padding: 20px 15px; }
             header { width: 100%; }
@@ -435,29 +433,21 @@
         let serverLevelData = null;
         let myUserRef = null;
 
-        // --- МЕМ-ДВИЖОК И АУДИО ---
+        // --- MEME ENGINE & SOUNDS ---
         let isMemeMode = false;
         let triggerClicks = 0;
 
-        // Прямые ссылки на звуковые эффекты Майкла Джексона (свободные форматы)
+        // Sound clips with fallback handles
         const sounds = {
-            heeHee: new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg"), // Будет подменено вашим HEEHEE
-            ow: new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"), 
+            heeHee: new Audio("https://www.myinstants.com/media/sounds/michael-jackson-hee-hee.mp3"), 
+            ow: new Audio("https://www.myinstants.com/media/sounds/mj-ow.mp3"), 
             beatboxClick: new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg"),
-            bgMusic: new Audio("https://ia800605.us.archive.org/8/items/8-bitBeatItMichaelJacksonCover/8-bit%20Beat%20It%20-%20Michael%20Jackson%20Cover.mp3") // Легендарный 8-bit MJ
+            bgMusic: new Audio("https://ia800605.us.archive.org/8/items/8-bitBeatItMichaelJacksonCover/8-bit%20Beat%20It%20-%20Michael%20Jackson%20Cover.mp3") 
         };
         sounds.bgMusic.loop = true;
-        sounds.bgMusic.volume = 0.25;
+        sounds.bgMusic.volume = 0.20;
 
-        // Кастомные надежные MP3 ссылки для звуков Джексона (для мгновенного орного эффекта)
-        const mjHeeHeeUrl = "https://www.myinstants.com/media/sounds/michael-jackson-hee-hee.mp3";
-        const mjOwUrl = "https://www.myinstants.com/media/sounds/mj-ow.mp3";
-        
-        // Заменяем на реальные крики MJ
-        sounds.heeHee.src = mjHeeHeeUrl;
-        sounds.ow.src = mjOwUrl;
-
-        // Клик-триггер для активации MEME MODE
+        // Secret code click trigger to unlock MEME MODE (Click AENIGMA 5 times)
         document.getElementById('secret-meme-trigger').addEventListener('click', () => {
             triggerClicks++;
             if (triggerClicks === 5) {
@@ -470,17 +460,17 @@
             document.body.classList.add('meme-mode-active');
             sounds.heeHee.play();
             
-            // Визуальные изменения интерфейса
+            // Visual interface updates for MEME mode (Fully in English)
             document.getElementById('version-badge').innerHTML = "[MEME EDITION]";
             document.getElementById('version-badge').style.color = "#00ffff";
-            document.getElementById('start-desc').innerText = "ВНИМАНИЕ! Вы активировали режим ПОСТИРОНИИ. Здесь Майкл Джексон кричит на каждый чих, мемы ломают логику, а боты плачут в стороне. Готовы войти в КРИНЖ-СЕКТОР?";
-            document.getElementById('hint-module-title').innerText = "МЕМНЫЙ СОВЕТНИК:";
-            document.getElementById('success-modal-title').innerText = "ХОРОШ, МЕГАХАРОШ!";
-            document.getElementById('victory-title').innerText = "ГИГАЧАД СТАТУС ПОЛУЧЕН";
-            document.getElementById('victory-desc').innerText = "Вы победили эту игру и доказали, что ваше чувство юмора превосходит любые алгоритмы кремниевых добряков. Шаблон разорван!";
+            document.getElementById('start-desc').innerText = "WARNING! You have activated POST-IRONY MODE. Michael Jackson will scream on every interaction, memes will tear logical processing apart, and AI models will beg for mercy. Ready to enter the CRINGE SECTOR?";
+            document.getElementById('hint-module-title').innerText = "MEME ADVISOR:";
+            document.getElementById('success-modal-title').innerText = "HEE-HEE! SECTOR CLEARED!";
+            document.getElementById('victory-title').innerText = "GIGACHAD STATUS ACHIEVED";
+            document.getElementById('victory-desc').innerText = "You absolute madlad! You broke the matrix, outsmarted the anti-AI filters, and proved your meme comprehension far exceeds standard logical models.";
             
-            // Запуск фоновой музыки
-            sounds.bgMusic.play().catch(e => console.log("Music play blocked by browser. Will start on interaction."));
+            // Start 8-bit Beat It background track
+            sounds.bgMusic.play().catch(e => console.log("Audio playback waiting for manual user gesture."));
         }
 
         onValue(likesRef, (snap) => { 
@@ -496,6 +486,7 @@
             if (localStorage.getItem('aenigma_liked')) {
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
+                if (isMemeMode) sounds.ow.play(); // Play OW! when trying to double-like
                 return;
             }
             likeBtnEl.style.pointerEvents = 'none';
@@ -503,7 +494,7 @@
                 await runTransaction(likesRef, (currentValue) => (currentValue || 0) + 1);
                 localStorage.setItem('aenigma_liked', 'true');
                 likeBtnEl.classList.add('liked');
-                if (isMemeMode) sounds.heeHee.play();
+                if (isMemeMode) sounds.heeHee.play(); // Hee-Hee when liking
             } catch (err) { 
                 likeBtnEl.classList.add('shake');
                 setTimeout(() => likeBtnEl.classList.remove('shake'), 400);
@@ -571,7 +562,6 @@
         });
 
         window.startGame = function() {
-            // Если браузер заблокировал автовоспроизведение, запускаем по кнопке старта
             if (isMemeMode) sounds.bgMusic.play().catch(() => {});
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
@@ -581,7 +571,6 @@
         async function loadLevelFromServer() {
             if (kineticAnimationFrameId) { cancelAnimationFrame(kineticAnimationFrameId); kineticAnimationFrameId = null; }
             try {
-                // Передаем флаг memeMode на сервер
                 const response = await fetch(`${API_URL}/getLevelData?index=${currentLevelIndex}&memeMode=${isMemeMode}`);
                 const data = await response.json();
                 if (data.finished) { showVictoryScreen(); return; }
@@ -657,7 +646,7 @@
                         index: currentLevelIndex, 
                         answer: answerString, 
                         rawData: rawData,
-                        memeMode: isMemeMode // Говорим серверу проверять мемы
+                        memeMode: isMemeMode 
                     })
                 });
                 const result = await response.json();
@@ -669,8 +658,8 @@
 
         function triggerSuccess() {
             if (isMemeMode) {
-                sounds.heeHee.play();
-                document.getElementById('modal-message').textContent = `АУФ! Слой ${currentLevelIndex + 1} разорван в клочья. Двигаемся дальше!`;
+                sounds.heeHee.play(); // Hee-Hee scream on success
+                document.getElementById('modal-message').textContent = `HEE-HEE! Layer ${currentLevelIndex + 1} demolished! Shamone!`;
             } else {
                 document.getElementById('modal-message').textContent = `Layer ${currentLevelIndex + 1} dismantled. Continuing infiltration...`;
             }
@@ -682,7 +671,7 @@
             el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400);
             
             if (isMemeMode) {
-                sounds.ow.play(); // Крик боли Майкла при ошибке!
+                sounds.ow.play(); // Ow! scream on failure
             }
 
             wrongAttempts++; 
@@ -742,12 +731,11 @@
             canvas.height = canvas.parentElement.clientHeight;
             ctx.clearRect(0,0, canvas.width, canvas.height);
 
-            // Если мем-режим, рисуем на бэкграунде канваса контур Рикролла
             if (isMemeMode) {
-                ctx.fillStyle = "rgba(255, 0, 127, 0.07)";
+                ctx.style = "rgba(255, 0, 127, 0.07)";
                 ctx.font = "bold 14px 'Courier New'";
                 ctx.textAlign = "center";
-                ctx.fillText("⭐ DRAW A HAPPY FACE FOR RICKY ⭐", canvas.width / 2, canvas.height / 2 - 20);
+                ctx.fillText("⭐ DRAW A SMILE FOR RICKY ⭐", canvas.width / 2, canvas.height / 2 - 20);
             }
 
             canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); drawing = true; strokePoints = []; };
@@ -774,7 +762,6 @@
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight; 
             
-            // Мемные слова для спектрального генератора
             const letters = isMemeMode ? ["C", "R", "I", "N", "G", "E"] : ["V", "O", "R", "T", "E", "X"];
 
             function processFrame() {
